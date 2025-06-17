@@ -27,19 +27,21 @@ namespace EinarTask.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdStr))
+                return Unauthorized();
 
-            if (userId == 0) return Unauthorized();
+            var userId = int.Parse(userIdStr);
 
             await EnsureDefaultTaskTypes(userId);
 
-            var viewModel = new TaskBoardViewModel
+            var viewModel = new TaskBoardViewModel  
             {
                 TaskTypes = await _context.TaskTypes
                     .Where(t => t.UserId == userId)
-                    .Include(t => t.Tasks)
+                    .Include(t => t.Tasks) // Taskı include olarak içinde dahil ediyorum
                     .OrderBy(t => t.Order)
-                    .ToListAsync(),
+                    .ToListAsync(), // Asenron ile listeliyorum noorderby
 
                 AllTasks = await _context.Tasks
                     .Where(t => t.UserId == userId)
@@ -264,6 +266,26 @@ namespace EinarTask.Controllers
             catch (Exception ex)
             {
                 return Json(new { success = false, message = "Güncelleme sırasında hata oluştu: " + ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteTask(int id)
+        {
+            var task = await _context.Tasks.FindAsync(id);
+            if (task == null)
+                return Json(new { success = false, message = "Görev bulunamadı." });
+
+            _context.Tasks.Remove(task);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Silme sırasında hata oluştu: " + ex.Message });
             }
         }
     }

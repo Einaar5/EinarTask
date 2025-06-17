@@ -4,98 +4,23 @@
     ViewData["Title"] = "Görev Panosu";
     Layout = "_LayoutTask";
 }
-<style>
-    body {
-        background-color: #f8f9fa;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
 
-    .board {
-        display: flex;
-        gap: 20px;
-        padding: 20px;
-        overflow-x: auto;
-    }
-
-    .column {
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        width: 300px;
-        min-height: 500px;
-        padding: 15px;
-    }
-
-    .column-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding-bottom: 10px;
-        border-bottom: 2px solid #ff6347;
-    }
-
-    .column-title {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: #333;
-    }
-
-    .task-card {
-        background-color: #fff;
-        border: 1px solid #ddd;
-        border-left: 5px solid #ff6347;
-        border-radius: 5px;
-        padding: 10px;
-        margin-bottom: 10px;
-        cursor: move;
-        transition: transform 0.2s;
-    }
-
-        .task-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-    .dropzone-highlight {
-        background-color: #ffe5e5;
-    }
-
-    .add-task-btn {
-        background-color: #ff6347;
-        border: none;
-        color: white;
-        font-weight: bold;
-    }
-
-        .add-task-btn:hover {
-            background-color: #e5533d;
-        }
-
-    .task-type-color {
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        display: inline-block;
-        margin-left: 5px;
-    }
-</style>
-
-
+<!--Burada Tasklar olucak ve Drag drop sistem ile taşına bilir bir kısım yapılacak          !!CAN     -->
 <div class="container-fluid">
-    <h1 class="my-4 text-center" style="color: #ff6347;">Görev Panosu</h1>
+    
     <div class="mb-3">
         <button class="btn add-task-btn" data-bs-toggle="modal" data-bs-target="#createTaskModal">+ Yeni Görev Ekle</button>
         <button class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#createNewTaskTypeModal">+ Yeni TaskType Ekle</button>
     </div>
 
     <div class="board">
-        @foreach (var taskType in Model.TaskTypes ?? Enumerable.Empty<EinarTask.Models.TaskType>())
+        @foreach (var taskType in Model.TaskTypes ?? Enumerable.Empty<EinarTask.Models.TaskType>()) 
         {
             <div class="column" data-tasktype-id="@taskType.Id" ondragover="event.preventDefault()" ondrop="drop(event)">
                 <div class="column-header">
                     <span class="column-title" contenteditable="true" onblur="updateTaskTypeName(@taskType.Id, this.innerText)">@taskType.Name</span>
                     <div>
-                        <input type="color" value="@taskType.Color" onchange="updateTaskTypeColor(@taskType.Id, this.value)" class="task-type-color" />
+                      
                         <button class="btn btn-sm btn-warning ms-2" onclick="editTaskType(@taskType.Id)">Düzenle</button>
                         <button class="btn btn-sm btn-danger ms-2" onclick="deleteTaskType(@taskType.Id)">Sil</button>
                     </div>
@@ -107,11 +32,18 @@
                             <h6>@task.Title</h6>
                             <p class="small text-muted">@task.Description</p>
                             <small>Vade: @(task.DueDate?.ToString("dd MMM yyyy") ?? "Belirtilmedi")</small>
+                            <button class="btn btn-sm btn-danger float-end" onclick="deleteTask(@task.Id)" title="Sil">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5.5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6zm3 .5a.5.5 0 0 1 .5-.5.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6z"/>
+                                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1 0-2h3.5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1H14a1 1 0 0 1 1 1zm-3-1a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 0-.5.5H3.5a.5.5 0 0 0-.5.5V4h10V3.5a.5.5 0 0 0-.5-.5H11.5z"/>
+                                </svg>
+                            </button>
                         </div>
                     }
                 </div>
             </div>
         }
+       
     </div>
 </div>
 
@@ -176,6 +108,7 @@
             }
         });
     }
+    
 
     // TaskType Adını Güncelle
     function updateTaskTypeName(taskTypeId, name) {
@@ -252,6 +185,27 @@
                 $('#createNewTaskTypeModalBody').html('<p>Hata oluştu, lütfen tekrar deneyin.</p>');
             }
         });
+    }
+
+    // Görev Sil
+    function deleteTask(taskId) {
+        if (confirm("Bu görevi silmek istediğinize emin misiniz?")) {
+            $.ajax({
+                url: '/Tasks/DeleteTask',
+                type: 'POST',
+                data: { id: taskId },
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function (response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
+        }
     }
 
     // Modal Açıldığında Partial View Yükle
