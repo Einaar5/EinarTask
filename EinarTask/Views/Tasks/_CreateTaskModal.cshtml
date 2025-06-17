@@ -1,0 +1,26 @@
+﻿@model EinarTask.Models.Task
+
+<form id="createTaskForm" asp-action="CreateTask" method="post">
+    @Html.AntiForgeryToken()
+    <div id="formErrors" class="text-danger"></div>
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label">Başlık</label>
+        <input asp-for="Title" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label">Açıklama</label>
+        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+    </div>
+    <div class="mb-3">
+        <label asp-for="DueDate" class="form-label">Vade Tarihi</label>
+        <input asp-for="DueDate" type="date" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Priority" class="form-label">Öncelik (1-5)</label>
+        <input asp-for="Priority" type="number" class="form-control" min="1" max="5" value="1" required />
+    </div>
+    <!-- Gizli alanlar, controller'da otomatik doldurulacak -->
+    <input type="hidden" asp-for="UserId" />
+    <input type="hidden" asp-for="TaskTypeId" />
+    <button type="submit" class="btn btn-primary" style="background-color: #ff6347; border: none;">Görev Ekle</button>
+</form>
