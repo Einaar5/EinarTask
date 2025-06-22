@@ -75,7 +75,7 @@ namespace EinarTask.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    return LocalRedirect(returnUrl ?? "/Home/Index");
+                    return LocalRedirect(returnUrl ?? "/Tasks/Index");
                 }
                 if (result.IsLockedOut)
                 {
@@ -94,7 +94,7 @@ namespace EinarTask.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
+            await _signInManager.SignOutAsync(); 
             return RedirectToAction("Index", "Home");
         }
     }

@@ -33,6 +33,13 @@ namespace EinarTask.Controllers
 
             var userId = int.Parse(userIdStr);
 
+            var userInfo = await _context.Users
+                .Where(u => u.Id == userId)
+                .Select(u => new { u.FirstName, u.LastName })
+                .FirstOrDefaultAsync();
+
+            ViewBag.UserFirstandLastName = $"{userInfo?.FirstName} {userInfo?.LastName}";
+
             await EnsureDefaultTaskTypes(userId);
 
             var viewModel = new TaskBoardViewModel  
@@ -288,5 +295,64 @@ namespace EinarTask.Controllers
                 return Json(new { success = false, message = "Silme sırasında hata oluştu: " + ex.Message });
             }
         }
+
+
+        //User Profile Edit 
+
+        [HttpGet]
+        public async Task<IActionResult> EditProfile()
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdStr))
+                return Unauthorized();
+            var userId = int.Parse(userIdStr);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+                return NotFound();
+            var viewModel = new EditProfileViewModel
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                Email = user.Email
+            };
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditProfile(EditProfileViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdStr))
+                return Unauthorized();
+            var userId = int.Parse(userIdStr);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+                return NotFound();
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.PhoneNumber = model.PhoneNumber;
+            user.Email = model.Email;
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index", "Tasks");
+            }
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+            
+            return View(model);
+        }
+
+
+
+
     }
 }
