@@ -8,6 +8,8 @@ namespace EinarTask.Models
         public string FirstName { get; set; } = "";
         public string LastName { get; set; } = "";
         public DateTime CreatedDate { get; set; }
+
+        public string UserImage { get; set; } = "";
         public virtual ICollection<TaskType> TaskTypes { get; set; }
         public virtual ICollection<Task> Tasks { get; set; }
     }

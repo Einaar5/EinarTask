@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Security.Claims;
 using System.Text.Json;
 using EinarTask.Data;
 using EinarTask.Models;
@@ -13,11 +14,14 @@ namespace EinarTask.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
+        private readonly IWebHostEnvironment environment;
 
-        public TasksController(ApplicationDbContext context, UserManager<User> userManager)
+
+        public TasksController(ApplicationDbContext context, UserManager<User> userManager, IWebHostEnvironment environment)
         {
             _context = context;
             _userManager = userManager;
+            this.environment = environment;
         }
 
         // TasksController.cs
@@ -32,14 +36,14 @@ namespace EinarTask.Controllers
                 return Unauthorized();
 
             var userId = int.Parse(userIdStr);
-
+            var user = await _userManager.FindByIdAsync(userId.ToString());
             var userInfo = await _context.Users
                 .Where(u => u.Id == userId)
                 .Select(u => new { u.FirstName, u.LastName })
                 .FirstOrDefaultAsync();
 
             ViewBag.UserFirstandLastName = $"{userInfo?.FirstName} {userInfo?.LastName}";
-
+           
             await EnsureDefaultTaskTypes(userId);
 
             var viewModel = new TaskBoardViewModel  
@@ -57,7 +61,7 @@ namespace EinarTask.Controllers
                 NewTask = new Models.Task { UserId = userId },
                 NewTaskType = new TaskType { UserId = userId }
             };
-
+            ViewBag.UserImage = user.UserImage;
             return View(viewModel);
         }
 
@@ -314,15 +318,18 @@ namespace EinarTask.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 PhoneNumber = user.PhoneNumber,
-                Email = user.Email
+                Email = user.Email,
+                UserImage = user.UserImage
             };
+
+            ViewBag.UserImage = user.UserImage;
             ViewBag.UserFirstandLastName = $"{user?.FirstName} {user?.LastName}";
             return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditProfile(EditProfileViewModel model)
+        public async Task<IActionResult> EditProfile(EditProfileViewModel model, UserDto userDto)
         {
             if (!ModelState.IsValid)
             {
@@ -335,10 +342,35 @@ namespace EinarTask.Controllers
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null)
                 return NotFound();
+
+
+
+            string newFileName = user.UserImage; // Eğer kullanıcı yeni bir dosya yüklemediyse, eski dosya adını kullanıyoruz.
+            if (userDto.UserImage != null) // Eğer kullanıcı yeni bir dosya yüklediyse, eski dosyayı silip, yeni dosyayı yüklüyoruz.
+            {
+                newFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                newFileName += Path.GetExtension(userDto.UserImage!.FileName); 
+                string imageFullPath = environment.WebRootPath + "/assets/userImage/" + newFileName; 
+                using (var stream = System.IO.File.Create(imageFullPath)) 
+                {
+                    userDto.UserImage.CopyTo(stream); // Dosyayı yeni dosyaya kopyalıyoruz.
+                }
+
+                string oldImagePath = environment.WebRootPath + "/assets/userImage/" + user.UserImage;// Eski dosyanın yolu
+                System.IO.File.Delete(oldImagePath); // Eski dosyayı siliyoruz.
+            }
+
+
+
+
+
+
+
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.PhoneNumber = model.PhoneNumber;
             user.Email = model.Email;
+            user.UserImage = newFileName; // burada yeni dosya adını veritabanına kaydediyoruz.
             var result = await _userManager.UpdateAsync(user);
             if (result.Succeeded)
             {

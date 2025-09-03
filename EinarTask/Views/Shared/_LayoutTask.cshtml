@@ -52,33 +52,46 @@
         <div class="sidebar-header">
             <span>EinarTask</span>
         </div>
-        <div class="sidebar-menu">
-            <ul class="nav flex-column">
+        <div class="sidebar-menu d-flex flex-column vh-100">
+            <ul class="nav flex-column flex-grow-1">
                 <li class="nav-item">
-                    <a class="nav-link @(currentController == "Tasks" && currentAction == "Index" ? "active" : "")" asp-controller="Tasks" asp-action="Index">
+                    <a class="nav-link @(currentController == "Tasks" && currentAction == "Index" ? "active" : "")"
+                       asp-controller="Tasks" asp-action="Index">
                         <i class="bi bi-house-door"></i> Anasayfa
                     </a>
                 </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @(currentController == "Tasks" && currentAction == "EditProfile" ? "active" : "")"
+                       asp-controller="Tasks" asp-action="EditProfile">
+                        <i class="bi bi-person"></i> Profil
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#" target="_blank">
+                        <i class="bi bi-gear me-2"></i> Ayarlar
+                    </a>
+                </li>
+
                 <li class="nav-item">
                     <a class="nav-link" href="https://github.com/Einaar5" target="_blank">
                         <i class="bi bi-code-slash"></i> Geliştirici
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link @(currentController == "Tasks" && currentAction == "EditProfile" ? "active" : "")" asp-controller="Tasks" asp-action="EditProfile">
-                        <i class="bi bi-person"></i> Profil
-                    </a>
-                </li>
+
+                <!-- Çıkış butonu -->
                 <li class="nav-item mt-auto">
-                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline w-100">
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="w-100">
                         @Html.AntiForgeryToken()
-                        <button type="submit" class="nav-link w-100 text-start" style="background:none; border:none;">
+                        <button type="submit" class="nav-link text-start w-75" style=" border:none;">
                             <i class="bi bi-box-arrow-right"></i> Çıkış Yap
                         </button>
                     </form>
                 </li>
             </ul>
         </div>
+
     </div>
 
     <!-- Main content -->
@@ -91,8 +104,20 @@
             <div class="user-dropdown dropdown ms-auto">
                 <a class="dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
                     <div class="user-avatar d-flex align-items-center justify-content-center">
-                        @ViewBag.UserFirstandLastName?.Substring(0, 1)
+                        @if (string.IsNullOrEmpty(ViewBag.UserImage as string))
+                        {
+                            @ViewBag.UserFirstandLastName?.Substring(0, 1)
+                        }
+                        else
+                        {
+                            <img src="~/assets/userImage/@ViewBag.UserImage"
+                                 alt="User Avatar"
+                                 class="rounded-circle"
+                                 style="width:40px; height:40px; object-fit:cover;" />
+                        }
                     </div>
+
+
                     <span class="ms-2">@ViewBag.UserFirstandLastName</span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
