@@ -7,74 +7,125 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background: linear-gradient(to right, #fff, #f9f9f9);
+            background: linear-gradient(to right, #ffffff, #f9f9f9);
             font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         .navbar-brand {
             font-weight: bold;
-            color: #ff6347;
-        }
-
-        .nav-link.active {
-            font-weight: bold;
-            color: #ff6347 !important;
+            color: #ff3c2e;
+            font-size: 1.8rem;
         }
 
         .hero-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
             padding: 60px 0;
+            
+        }
+
+        .hero-section-item{
+            background: linear-gradient(to right, transparent 50%, #ff3c2e 50%);
         }
 
         .hero-title {
-            font-size: 3rem;
-            font-weight: bold;
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #1a1a1a;
         }
 
         .hero-desc {
             color: #555;
+            font-size: 1.2rem;
             margin-bottom: 30px;
         }
 
         .btn-domates {
-            background-color: #ff6347;
-            color: white;
-            border: none;
-            padding: 12px 24px;
+            background-color: #ff3c2e;
+            color: #fff;
+            padding: 12px 28px;
             border-radius: 8px;
-            font-weight: bold;
+            font-weight: 600;
+            transition: background 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
         }
 
             .btn-domates:hover {
-                background-color: #e5533d;
+                background-color: #d33225;
             }
 
         .illustration {
             width: 100%;
             max-width: 600px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @@keyframes float {
+            0%, 100%
+
+        {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            color: #999;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
 
-   
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-white shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">EinarTask</a>
+        </div>
+    </nav>
+
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">
-            <div class="row align-items-center">
+            <div class="row align-items-center   g-5">
                 <!-- Sol taraf (Metin) -->
                 <div class="col-md-6">
-                    <h1 class="hero-title">Task Manager Illustration</h1>
-                    <p class="hero-desc">Task manager vector design concept. To do list application landing page template.</p>
-                    <a href="#" class="btn btn-domates">Get Started</a>
+                    <h1 class="hero-title">Görevlerini Kolayca Yönet</h1>
+                    <p class="hero-desc">EinarTask ile işlerin kontrolünü eline al. Görevleri planla, takip et ve başarıya ulaş.</p>
+                    <a href="#" class="btn-domates">Başla</a>
                 </div>
 
                 <!-- Sağ taraf (Görsel) -->
-                <div class="col-md-6 text-center">
-                    <img src="/assets/img/TaskHomeDesign.png" alt="Task Illustration" class="illustration img-fluid">
+                <div class="col-md-6   text-center">
+                    <div class=" ">
+                        <img src="/assets/img/TaskHomeDesign.png" alt="Görev Yönetimi Görseli" class="illustration img-fluid">
+                    </div>
                 </div>
+
+                <div>
+                   
+
+                </div>
+                
             </div>
         </div>
     </section>
+
+    <!-- Footer -->
+    <footer>
+        © 2025 EinarTask. Tüm hakları saklıdır.
+    </footer>
 
 </body>
 </html>

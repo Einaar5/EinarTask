@@ -162,11 +162,10 @@ namespace EinarTask.Controllers
                 {
                     return NotFound();
                 }
-                return PartialView("_CreateNewTaskTypeModal", taskType);
+                return PartialView("_EditTaskModal", taskType); // _EditTaskModal.cshtml döndürülüyor
             }
             return PartialView("_CreateNewTaskTypeModal", new TaskType { UserId = userId.Value, Order = 1, Color = "#000000" });
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateOrUpdateTaskType(TaskType taskType)
@@ -302,7 +301,8 @@ namespace EinarTask.Controllers
         [HttpGet]
         public async Task<IActionResult> EditProfile()
         {
-            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier); // buada ClaimTypes.NameIdentifier kullanarak kullanıcı ID'sini alıyorum
             if (string.IsNullOrEmpty(userIdStr))
                 return Unauthorized();
             var userId = int.Parse(userIdStr);
@@ -316,6 +316,7 @@ namespace EinarTask.Controllers
                 PhoneNumber = user.PhoneNumber,
                 Email = user.Email
             };
+            ViewBag.UserFirstandLastName = $"{user?.FirstName} {user?.LastName}";
             return View(viewModel);
         }
 

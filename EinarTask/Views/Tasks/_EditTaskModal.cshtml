@@ -1,0 +1,26 @@
+﻿@model EinarTask.Models.TaskType
+
+<form id="taskTypeForm" asp-action="CreateOrUpdateTaskType" method="post">
+    @Html.AntiForgeryToken()
+    <div id="formErrors" class="text-danger"></div>
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label">İsim</label>
+        <input asp-for="Name" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label">Açıklama</label>
+        <textarea asp-for="Description" class="form-control" rows="2">@((Model.Description == null) ? Model.Description ="Açıklama" : Model.Description)</textarea>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Color" class="form-label">Renk</label>
+        <input asp-for="Color" type="color" class="form-control form-control-color" value="#000000" required />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Order" class="form-label">Sıra</label>
+        <input asp-for="Order" type="number" class="form-control" min="1" required />
+    </div>
+    <button type="submit" class="btn btn-primary" style="background-color: #ff6347; border: none;">
+        @(Model.Id == 0 ? "Yeni TaskType Ekle" : "TaskType Güncelle")
+    </button>
+</form>

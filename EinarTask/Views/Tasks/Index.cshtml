@@ -5,45 +5,64 @@
     Layout = "_LayoutTask";
 }
 
-<!--Burada Tasklar olucak ve Drag drop sistem ile taşına bilir bir kısım yapılacak          !!CAN     -->
-<div class="container-fluid">
-    
+<div class="container-fluid py-3">
     <div class="mb-3">
-        <button class="btn add-task-btn" data-bs-toggle="modal" data-bs-target="#createTaskModal">+ Yeni Görev Ekle</button>
-        <button class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#createNewTaskTypeModal">+ Yeni TaskType Ekle</button>
+        <button class="button-effect active" data-bs-toggle="modal" data-bs-target="#createTaskModal">
+            + Yeni Görev Ekle
+        </button>
+
+        <button class="button-effect active" data-bs-toggle="modal" data-bs-target="#createNewTaskTypeModal">+ Yeni TaskType Ekle</button>
     </div>
 
-    <div class="board">
-        @foreach (var taskType in Model.TaskTypes ?? Enumerable.Empty<EinarTask.Models.TaskType>()) 
+    <div class="row g-3">
+        @foreach (var taskType in Model.TaskTypes ?? Enumerable.Empty<EinarTask.Models.TaskType>())
         {
-            <div class="column" data-tasktype-id="@taskType.Id" ondragover="event.preventDefault()" ondrop="drop(event)">
-                <div class="column-header">
-                    <span class="column-title" contenteditable="true" onblur="updateTaskTypeName(@taskType.Id, this.innerText)">@taskType.Name</span>
-                    <div>
-                      
-                        <button class="btn btn-sm btn-warning ms-2" onclick="editTaskType(@taskType.Id)">Düzenle</button>
-                        <button class="btn btn-sm btn-danger ms-2" onclick="deleteTaskType(@taskType.Id)">Sil</button>
-                    </div>
-                </div>
-                <div class="task-list">
-                    @foreach (var task in Model.AllTasks.Where(t => t.TaskTypeId == taskType.Id))
-                    {
-                        <div class="task-card" draggable="true" ondragstart="drag(event)" data-task-id="@task.Id">
-                            <h6>@task.Title</h6>
-                            <p class="small text-muted">@task.Description</p>
-                            <small>Vade: @(task.DueDate?.ToString("dd MMM yyyy") ?? "Belirtilmedi")</small>
-                            <button class="btn btn-sm btn-danger float-end" onclick="deleteTask(@task.Id)" title="Sil">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5.5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6zm3 .5a.5.5 0 0 1 .5-.5.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6z"/>
-                                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1 0-2h3.5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1H14a1 1 0 0 1 1 1zm-3-1a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 0-.5.5H3.5a.5.5 0 0 0-.5.5V4h10V3.5a.5.5 0 0 0-.5-.5H11.5z"/>
-                                </svg>
-                            </button>
+            <div class="col-md-3">
+                <div class="column p-3 border rounded bg-light"
+                     data-tasktype-id="@taskType.Id"
+                     ondragover="allowDrop(event)"
+                     ondrop="dropTask(event)">
+
+                    <!-- Kolon Başlığı -->
+                    <div class="column-header d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                        <h5 class="mb-0">@taskType.Name</h5>
+                        <div>
+                            <button class="btn btn-sm btn-warning" onclick="editTaskType(@taskType.Id)">Düzenle</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteTaskType(@taskType.Id)">Sil</button>
                         </div>
-                    }
+                    </div>
+
+                    <!-- Task Kartları -->
+                    <div class="task-list">
+                        @foreach (var task in Model.AllTasks.Where(t => t.TaskTypeId == taskType.Id))
+                        {
+                            <div class="task-card mb-3 p-3 border rounded shadow-sm bg-white"
+                                 draggable="true"
+                                 ondragstart="dragTask(event)"
+                                 data-task-id="@task.Id">
+
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h6 class="fw-bold mb-1">@task.Title</h6>
+                                    <!-- Tutma ikonu -->
+                                    <span class="drag-handle text-muted ms-2" style="cursor: grab;">☰</span>
+                                </div>
+
+                                <p class="small text-muted mb-1">@task.Description</p>
+                                <small class="text-secondary d-block mb-2">
+                                    Vade: @(task.DueDate?.ToString("dd MMM yyyy") ?? "Belirtilmedi")
+                                </small>
+
+                                <button class="btn btn-sm btn-outline-danger "
+                                        onclick="deleteTask(@task.Id)" title="Sil">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+
+                        }
+                    </div>
                 </div>
             </div>
         }
-       
     </div>
 </div>
 
@@ -51,7 +70,7 @@
 <div class="modal fade" id="createTaskModal" tabindex="-1" aria-labelledby="createTaskModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header" style="background-color: #ff6347; color: white;">
+            <div class="modal-header bg-danger text-white">
                 <h5 class="modal-title" id="createTaskModalLabel">Yeni Görev Ekle</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -62,11 +81,11 @@
     </div>
 </div>
 
-<!-- Yeni TaskType Ekle/Düzenle Modal -->
+<!-- Yeni TaskType Modal -->
 <div class="modal fade" id="createNewTaskTypeModal" tabindex="-1" aria-labelledby="createNewTaskTypeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header" style="background-color: #28a745; color: white;">
+            <div class="modal-header bg-success text-white">
                 <h5 class="modal-title" id="createNewTaskTypeModalLabel">Yeni TaskType</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -77,230 +96,43 @@
     </div>
 </div>
 
-<!-- JavaScript kısmı aynı kalabilir -->
+<!-- TaskType Düzenle Modal -->
+<div class="modal fade" id="editTaskTypeModal" tabindex="-1" aria-labelledby="editTaskTypeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title" id="editTaskTypeModalLabel">TaskType Düzenle</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="editTaskTypeModalBody">
+                @await Html.PartialAsync("_EditTaskModal", Model.NewTaskType)
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/js/ApiRequests.js"></script>
 <script>
-    // Sürükle-Bırak Fonksiyonları
-    function drag(event) {
-        event.dataTransfer.setData("taskId", event.target.getAttribute("data-task-id"));
+        let draggedEl = null;
+
+    function dragTask(e) {
+        draggedEl = e.currentTarget;   // kartı al
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", draggedEl.dataset.taskId);
     }
 
-    function drop(event) {
-        event.preventDefault();
-        const taskId = event.dataTransfer.getData("taskId");
-        const newTaskTypeId = event.target.closest(".column").getAttribute("data-tasktype-id");
-
-        $.ajax({
-            url: '/Tasks/UpdateTaskTypeId',
-            type: 'POST',
-            data: { taskId: taskId, newTaskTypeId: newTaskTypeId },
-            headers: {
-                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-            },
-            success: function (response) {
-                if (response.success) {
-                    location.reload();
-                } else {
-                    alert(response.message);
-                }
-            }
-        });
-    }
-    
-
-    // TaskType Adını Güncelle
-    function updateTaskTypeName(taskTypeId, name) {
-        $.ajax({
-            url: '/Tasks/UpdateTaskType',
-            type: 'POST',
-            data: { id: taskTypeId, name: name, color: '' },
-            headers: {
-                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-            },
-            success: function (response) {
-                if (!response.success) {
-                    alert(response.message);
-                }
-            }
-        });
+    function allowDrop(e) {
+        e.preventDefault(); // gerekli
     }
 
-    // TaskType Rengini Güncelle
-    function updateTaskTypeColor(taskTypeId, color) {
-        $.ajax({
-            url: '/Tasks/UpdateTaskType',
-            type: 'POST',
-            data: { id: taskTypeId, name: '', color: color },
-            headers: {
-                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-            },
-            success: function (response) {
-                if (!response.success) {
-                    alert(response.message);
-                }
-            }
-        });
-    }
-
-    // TaskType Sil
-    function deleteTaskType(taskTypeId) {
-        if (confirm("Bu görev tipini silmek istediğinize emin misiniz?")) {
-            $.ajax({
-                url: '/Tasks/DeleteTaskType',
-                type: 'POST',
-                data: { id: taskTypeId },
-                headers: {
-                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                },
-                success: function (response) {
-                    if (response.success) {
-                        location.reload();
-                    } else {
-                        alert(response.message);
-                    }
-                }
-            });
-        }
-    }
-
-    // TaskType Düzenle
-    function editTaskType(taskTypeId) {
-        var userId = '@User.FindFirstValue(ClaimTypes.NameIdentifier)';
-        if (!userId || userId === '') {
-            console.error('UserId bulunamadı!');
-            return;
-        }
-        $.ajax({
-            url: '/Tasks/CreateOrUpdateTaskType',
-            type: 'GET',
-            data: { id: taskTypeId, userId: userId },
-            success: function (data) {
-                $('#createNewTaskTypeModalBody').html(data);
-                $('#createNewTaskTypeModal').modal('show');
-            },
-            error: function (xhr, status, error) {
-                console.error('Partial view yüklenirken hata:', error);
-                $('#createNewTaskTypeModalBody').html('<p>Hata oluştu, lütfen tekrar deneyin.</p>');
-            }
-        });
-    }
-
-    // Görev Sil
-    function deleteTask(taskId) {
-        if (confirm("Bu görevi silmek istediğinize emin misiniz?")) {
-            $.ajax({
-                url: '/Tasks/DeleteTask',
-                type: 'POST',
-                data: { id: taskId },
-                headers: {
-                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                },
-                success: function (response) {
-                    if (response.success) {
-                        location.reload();
-                    } else {
-                        alert(response.message);
-                    }
-                }
-            });
-        }
-    }
-
-    // Modal Açıldığında Partial View Yükle
-    $('#createTaskModal').on('show.bs.modal', function () {
-        var userId = '@User.FindFirstValue(ClaimTypes.NameIdentifier)';
-        if (!userId || userId === '') {
-            console.error('UserId bulunamadı!');
-            $('#createTaskModalBody').html('<p>Kullanıcı kimliği alınamadı, lütfen giriş yapın.</p>');
-            return;
-        }
-        $.ajax({
-            url: '/Tasks/CreateTask',
-            type: 'GET',
-            data: { userId: userId },
-            success: function (data) {
-                $('#createTaskModalBody').html(data);
-            },
-            error: function (xhr, status, error) {
-                console.error('Partial view yüklenirken hata:', error);
-                $('#createTaskModalBody').html('<p>Hata oluştu, lütfen tekrar deneyin. Detaylar konsolda.</p>');
-            }
-        });
-    });
-
-    // Yeni TaskType Modal Açıldığında
-    $('#createNewTaskTypeModal').on('show.bs.modal', function () {
-        var userId = '@User.FindFirstValue(ClaimTypes.NameIdentifier)';
-        if (!userId || userId === '') {
-            console.error('UserId bulunamadı!');
-            $('#createNewTaskTypeModalBody').html('<p>Kullanıcı kimliği alınamadı, lütfen giriş yapın.</p>');
-            return;
-        }
-        $.ajax({
-            url: '/Tasks/CreateOrUpdateTaskType',
-            type: 'GET',
-            data: { userId: userId },
-            success: function (data) {
-                $('#createNewTaskTypeModalBody').html(data);
-            },
-            error: function (xhr, status, error) {
-                console.error('Partial view yüklenirken hata:', error);
-                $('#createNewTaskTypeModalBody').html('<p>Hata oluştu, lütfen tekrar deneyin. Detaylar konsolda.</p>');
-            }
-        });
-    });
-
-
-    // Form Gönderimleri
-    $(document).on('submit', '#createTaskForm', function (e) {
+    function dropTask(e) {
         e.preventDefault();
-        var formData = $(this).serialize();
-        $.ajax({
-            url: '/Tasks/CreateTask',
-            type: 'POST',
-            data: formData,
-            headers: {
-                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-            },
-            success: function (response) {
-                if (response.success) {
-                    $('#createTaskModal').modal('hide');
-                    location.reload();
-                } else {
-                    $('#formErrors').html('<ul>' + response.errors.map(e => '<li>' + e + '</li>').join('') + '</ul>');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.log('Hata:', error);
-                $('#formErrors').html('<ul><li>Bir hata oluştu, lütfen tekrar deneyin.</li></ul>');
-            }
-        });
-    });
+        if (draggedEl) {
+            e.currentTarget.appendChild(draggedEl); // kartı taşı
+            draggedEl = null;
+        }
+    }
 
-    $(document).on('submit', '#createTaskTypeForm', function (e) {
-        e.preventDefault();
-        var formData = $(this).serialize();
-        $.ajax({
-            url: '/Tasks/CreateOrUpdateTaskType',
-            type: 'POST',
-            data: formData,
-            headers: {
-                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-            },
-            success: function (response) {
-                if (response.success) {
-                    $('#createNewTaskTypeModal').modal('hide');
-                    location.reload();
-                } else {
-                    $('#formErrors').html('<ul><li>' + response.message + '</li></ul>');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.log('Hata:', error);
-                $('#formErrors').html('<ul><li>Bir hata oluştu, lütfen tekrar deneyin.</li></ul>');
-            }
-        });
-    });
 </script>

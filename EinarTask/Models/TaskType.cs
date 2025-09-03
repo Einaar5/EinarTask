@@ -13,7 +13,7 @@ namespace EinarTask.Models
         public string Name { get; set; }
 
         [StringLength(100)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [StringLength(7)]
         public string Color { get; set; }
