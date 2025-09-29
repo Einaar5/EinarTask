@@ -1,0 +1,55 @@
+﻿@{
+	Layout = "_LayoutDemoApp";
+}
+
+<style>
+    .login-card {
+        width: 450px;
+        border-radius: 16px;
+        overflow: hidden; /* header köşeleri yuvarlansın */
+        animation: fadeIn 0.8s ease-in-out;
+    }
+
+        .login-card .card-header {
+            background: linear-gradient(90deg, #ff512f, #dd2476); /* turuncu → pembe */
+            font-size: 1.5rem;
+            padding: 20px;
+            border-bottom: none;
+        }
+
+        .login-card .card-body {
+            padding: 30px;
+        }
+
+    .btn-gradient-orange-pink {
+        background: linear-gradient(90deg, #ff512f, #dd2476); /* turuncu → pembe */
+        color: #fff !important;
+        border: none;
+        border-radius: 12px; /* daha yuvarlak */
+        padding: 12px 24px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px; /* ikon ile yazı arası boşluk */
+        transition: 0.3s;
+    }
+
+        .btn-gradient-orange-pink:hover {
+            opacity: 0.9;
+            transform: translateY(-2px); /* hover’da hafif yükselme efekti */
+        }
+</style>
+<div class="d-flex justify-content-center align-items-center" style="height: 80vh;">
+    <div class="card login-card shadow-lg">
+        <div class="card-header text-white text-center fw-bold">
+            Einar Task
+        </div>
+        <div class="card-body text-center">
+            <h4 class="mb-4">Devam Etmek İçin Giriş Yapın</h4>
+            <p>Daha fazla özellik için </p>
+            <button class="btn-gradient-orange-pink" onclick="location.href='@Url.Action("Login", "Account")'">
+                <i class="fa-sharp fa-regular fa-user"></i> Giriş Yap
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,196 @@
+﻿
+@{
+    Layout = "_LayoutDemoApp";
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Görev Panosu</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .task-card {
+            cursor: grab;
+        }
+
+        .btn-gradient-yellow {
+            background: linear-gradient(to right, #f7e600, #f5b700);
+            color: #000;
+        }
+
+        .btn-gradient-red {
+            background: linear-gradient(to right, #ff4d4d, #b30000);
+            color: #fff;
+        }
+
+        .button-effect {
+            background: #0d6efd;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+            .button-effect:hover {
+                opacity: 0.9;
+            }
+
+        .btn-gradient-orange-pink {
+            background: linear-gradient(90deg, #ff512f, #dd2476); /* turuncu → pembe */
+            color: #fff !important;
+            border: none;
+            border-radius: 12px; /* daha yuvarlak */
+            padding: 12px 24px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px; /* ikon ile yazı arası boşluk */
+            transition: 0.3s;
+        }
+
+            .btn-gradient-orange-pink:hover {
+                opacity: 0.9;
+                transform: translateY(-2px); /* hover’da hafif yükselme efekti */
+            }
+    </style>
+</head>
+<body class="bg-light">
+
+    <div class="container-fluid py-3">
+        <div class="mb-3">
+            <button class="btn-gradient-orange-pink" data-bs-toggle="modal" data-bs-target="#createTaskModal">
+                <i class="bi bi-plus-circle"></i> Yeni Görev Ekle
+            </button>
+
+            <button class="btn-gradient-orange-pink" data-bs-toggle="modal" data-bs-target="#createNewTaskTypeModal">
+                <i class="bi bi-tags"></i> Yeni TaskType Ekle
+            </button>
+        </div>
+
+        <div class="row g-3">
+            <!-- To Do -->
+            <div class="col-md-3">
+                <div class="column p-3 border rounded bg-white"
+                     ondragover="allowDrop(event)" ondrop="dropTask(event)">
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                        <h5 class="mb-0">To Do</h5>
+                        <div>
+                            <button class="btn btn-sm btn-gradient-yellow">Düzenle</button>
+                            <button class="btn btn-sm btn-gradient-red">Sil</button>
+                        </div>
+                    </div>
+                    <div class="task-list">
+                        <div class="task-card mb-3 p-3 border rounded shadow-sm bg-white"
+                             draggable="true" ondragstart="dragTask(event)" data-task-id="1">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h6 class="fw-bold mb-1">UI Tasarımı</h6>
+                                <span class="text-muted">☰</span>
+                            </div>
+                            <p class="small text-muted mb-1">Bootstrap ile ekran tasarla</p>
+                            <small class="text-secondary">Vade: 02 Eki 2025</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- In Progress -->
+            <div class="col-md-3">
+                <div class="column p-3 border rounded bg-white"
+                     ondragover="allowDrop(event)" ondrop="dropTask(event)">
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                        <h5 class="mb-0">In Progress</h5>
+                        <div>
+                            <button class="btn btn-sm btn-gradient-yellow">Düzenle</button>
+                            <button class="btn btn-sm btn-gradient-red">Sil</button>
+                        </div>
+                    </div>
+                    <div class="task-list">
+                        <div class="task-card mb-3 p-3 border rounded shadow-sm bg-white"
+                             draggable="true" ondragstart="dragTask(event)" data-task-id="2">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h6 class="fw-bold mb-1">Backend API</h6>
+                                <span class="text-muted">☰</span>
+                            </div>
+                            <p class="small text-muted mb-1">Login servisini yaz</p>
+                            <small class="text-secondary">Vade: 05 Eki 2025</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Done -->
+            <div class="col-md-3">
+                <div class="column p-3 border rounded bg-white"
+                     ondragover="allowDrop(event)" ondrop="dropTask(event)">
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                        <h5 class="mb-0">Done</h5>
+                        <div>
+                            <button class="btn btn-sm btn-gradient-yellow">Düzenle</button>
+                            <button class="btn btn-sm btn-gradient-red">Sil</button>
+                        </div>
+                    </div>
+                    <div class="task-list">
+                        <div class="task-card mb-3 p-3 border rounded shadow-sm bg-white"
+                             draggable="true" ondragstart="dragTask(event)" data-task-id="3">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h6 class="fw-bold mb-1">Test Et</h6>
+                                <span class="text-muted">☰</span>
+                            </div>
+                            <p class="small text-muted mb-1">Unit testleri hazırla</p>
+                            <small class="text-secondary">Vade: 07 Eki 2025</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Görev Ekle Modal -->
+    <div class="modal fade" id="createTaskModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Yeni Görev Ekle</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">Yeni Görev İçin Giriş Yap</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Yeni TaskType Modal -->
+    <div class="modal fade" id="createNewTaskTypeModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">Yeni TaskType</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">Yeni Task Türü İçin Giriş Yap</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let draggedEl = null;
+        function dragTask(e) {
+            draggedEl = e.currentTarget;
+            e.dataTransfer.effectAllowed = "move";
+            e.dataTransfer.setData("text/plain", draggedEl.dataset.taskId);
+        }
+        function allowDrop(e) { e.preventDefault(); }
+        function dropTask(e) {
+            e.preventDefault();
+            if (draggedEl) {
+                e.currentTarget.appendChild(draggedEl);
+                draggedEl = null;
+            }
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

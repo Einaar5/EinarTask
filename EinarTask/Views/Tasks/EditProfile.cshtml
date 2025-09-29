@@ -67,7 +67,7 @@
 
             <div class="row">
                 <div class="offset-sm-4 col-sm-4 d-grid">
-                    <button type="submit" class="btn btn-tomatored">Kaydet</button>
+                    <button type="submit" class="btn btn btn-save">Kaydet</button>
                 </div>
                 <div class="col-sm-4 d-grid">
                     <a class="btn btn-outline-tomatored" asp-controller="Tasks" asp-action="Index" role="button">İptal</a>
@@ -78,59 +78,96 @@
 </div>
 
 @section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
 }
 <style>
     .profile-container {
-        max-width: 600px;
+        max-width: 700px;
         margin: 50px auto;
-        padding: 30px;
-        background-color: #fff;
-        border-radius: 15px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .btn-tomatored {
-        background-color: #ff6347;
-        border-color: #ff6347;
-        color: white;
-    }
-
-        .btn-tomatored:hover {
-            background-color: #e5533d;
-            border-color: #e5533d;
-        }
-
-    .btn-outline-tomatored {
-        border-color: #ff6347;
-        color: #ff6347;
-    }
-
-        .btn-outline-tomatored:hover {
-            background-color: #ff6347;
-            color: white;
-        }
-
-    .form-label {
-        font-weight: 500;
-        color: #333;
-    }
-
-    .form-control:focus {
-        border-color: #ff6347;
-        box-shadow: 0 0 0 0.2rem rgba(255, 99, 71, 0.25);
+        padding: 40px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+        animation: fadeIn 0.5s ease-in-out;
     }
 
     .header {
-        color: #ff6347;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
         font-weight: 700;
+        font-size: 2rem;
         text-align: center;
         margin-bottom: 30px;
     }
 
-    .alert {
+    .form-label {
+        font-weight: 600;
+        color: #555;
+    }
+
+    .form-control {
         border-radius: 10px;
+        transition: 0.3s;
+    }
+
+        .form-control:focus {
+            border-color: transparent;
+            box-shadow: 0 0 0 0.2rem rgba(255, 99, 71, 0.35);
+        }
+
+    .btn-save {
+        background: var(--primary-gradient);
+        border: none;
+        border-radius: 12px;
+        padding: 10px 20px;
+        color: white;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 65, 108, 0.3);
+        }
+
+    .btn-cancel {
+        border: 2px solid transparent;
+        background: linear-gradient(#fff, #fff) padding-box, var(--primary-gradient) border-box;
+        border-radius: 12px;
+        color: #ff416c;
+        font-weight: 600;
+        padding: 10px 20px;
+        transition: 0.3s;
+    }
+
+        .btn-cancel:hover {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+    .alert {
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(255, 99, 71, 0.1);
+    }
+
+    /* Basit fadeIn animasyonu */
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
     }
 </style>

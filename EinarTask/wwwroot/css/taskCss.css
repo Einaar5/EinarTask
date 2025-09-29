@@ -190,3 +190,46 @@ body {
     .user-dropdown .dropdown-toggle:hover {
         text-decoration: none;
     }
+
+.btn-gradient-yellow {
+    background: linear-gradient(90deg, #FFD700, #FFC107);
+    color: #fff !important;
+    border: none;
+    border-radius: 8px; /* köşeler yumuşak */
+    transition: 0.3s;
+}
+
+    .btn-gradient-yellow:hover {
+        background: linear-gradient(90deg, #FFC107, #FFB300);
+    }
+
+
+.btn-gradient-red {
+    background: linear-gradient(90deg, #FF4B2B, #FF0000);
+    color: #fff !important;
+    border: none;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+    .btn-gradient-red:hover {
+        background: linear-gradient(90deg, #FF0000, #B71C1C);
+    }
+
+
+
+.page-fade {
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

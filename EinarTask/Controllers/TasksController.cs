@@ -385,7 +385,13 @@ namespace EinarTask.Controllers
         }
 
 
+        public IActionResult Settings()
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier); // buada ClaimTypes.NameIdentifier kullanarak kullanıcı ID'sini alıyorum
 
+
+            return View();
+        }
 
     }
 }

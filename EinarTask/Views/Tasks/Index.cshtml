@@ -4,14 +4,32 @@
     ViewData["Title"] = "Görev Panosu";
     Layout = "_LayoutTask";
 }
+<style>
+    .btn-gradient-orange-pink {
+        background: linear-gradient(90deg, #ff512f, #dd2476); /* turuncu → pembe */
+        color: #fff !important;
+        border: none;
+        border-radius: 12px; /* daha yuvarlak */
+        padding: 12px 24px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px; /* ikon ile yazı arası boşluk */
+        transition: 0.3s;
+    }
 
-<div class="container-fluid py-3">
+        .btn-gradient-orange-pink:hover {
+            opacity: 0.9;
+            transform: translateY(-2px); /* hover’da hafif yükselme efekti */
+        }
+</style>
+<div class="container-fluid py-3 page-fade">
     <div class="mb-3">
-        <button class="button-effect active" data-bs-toggle="modal" data-bs-target="#createTaskModal">
+        <button class="btn-gradient-orange-pink" data-bs-toggle="modal" data-bs-target="#createTaskModal">
             + Yeni Görev Ekle
         </button>
 
-        <button class="button-effect active" data-bs-toggle="modal" data-bs-target="#createNewTaskTypeModal">+ Yeni TaskType Ekle</button>
+        <button class="btn-gradient-orange-pink" data-bs-toggle="modal" data-bs-target="#createNewTaskTypeModal">+ Yeni TaskType Ekle</button>
     </div>
 
     <div class="row g-3">
@@ -27,8 +45,10 @@
                     <div class="column-header d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
                         <h5 class="mb-0">@taskType.Name</h5>
                         <div>
-                            <button class="btn btn-sm btn-warning" onclick="editTaskType(@taskType.Id)">Düzenle</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteTaskType(@taskType.Id)">Sil</button>
+                            <button class="btn btn-sm btn-gradient-yellow" onclick="editTaskType(@taskType.Id)">Düzenle</button>
+
+                            <button class="btn btn-sm btn-gradient-red" onclick="deleteTaskType(@taskType.Id)">Sil</button>
+
                         </div>
                     </div>
 

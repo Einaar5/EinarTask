@@ -1,131 +1,560 @@
-﻿<!DOCTYPE html>
+﻿
+@{
+    Layout = null;
+}
+
+<!doctype html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EinarTask | Görev Yöneticisi</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EinarTask — Modern Task Manager</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
+        /* --------------------
+               EinarTask Landing Page
+               Single-file HTML + CSS + JS
+               Renk paleti ekran görüntüsüne göre ayarlandı (domates/pembe gradyan + sarı badge)
+               -------------------- */
+        :root {
+            --bg: #f7f8fa;
+            --panel: #ffffff;
+            --muted: #6b6b6f;
+            --grad-from: #ff6b6b; /* sıcak domates/pembe */
+            --grad-to: #ff4d98;
+            --accent-grad: linear-gradient(135deg,var(--grad-from),var(--grad-to));
+            --accent-shadow: 0 12px 30px rgba(255,77,152,0.12);
+            --badge: #ffd54a; /* sarı */
+            --danger: #ff4747;
+            --glass: rgba(255,255,255,0.7);
+            --radius: 14px;
+            color-scheme: light;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html, body {
+            height: 100%
+        }
+
         body {
-            background: linear-gradient(to right, #ffffff, #f9f9f9);
-            font-family: 'Segoe UI', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            margin: 0;
+            font-family: Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+            background: linear-gradient(180deg,#fbfdff 0%, #f6f8fb 50%);
+            color: #222;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .navbar-brand {
-            font-weight: bold;
-            color: #ff3c2e;
-            font-size: 1.8rem;
-        }
-
-        .hero-section {
-            flex: 1;
+        /* ---------- Layout ---------- */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 80;
+            background: transparent;
+            padding: 22px 36px;
             display: flex;
             align-items: center;
-            padding: 60px 0;
-            
+            justify-content: space-between
         }
 
-        .hero-section-item{
-            background: linear-gradient(to right, transparent 50%, #ff3c2e 50%);
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 14px
         }
 
-        .hero-title {
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: #1a1a1a;
-        }
-
-        .hero-desc {
-            color: #555;
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-        }
-
-        .btn-domates {
-            background-color: #ff3c2e;
-            color: #fff;
-            padding: 12px 28px;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: background 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-            .btn-domates:hover {
-                background-color: #d33225;
+            .logo .mark {
+                width: 48px;
+                height: 48px;
+                border-radius: 12px;
+                background: var(--accent-grad);
+                box-shadow: var(--accent-shadow);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #fff;
+                font-weight: 700
             }
 
-        .illustration {
-            width: 100%;
-            max-width: 600px;
-            animation: float 3s ease-in-out infinite;
+        .nav {
+            display: flex;
+            gap: 20px;
+            align-items: center
         }
 
+            .nav a {
+                color: var(--muted);
+                text-decoration: none;
+                font-weight: 600
+            }
+
+        .btn {
+            appearance: none;
+            border: 0;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer
+        }
+
+        .btn-primary {
+            background: var(--accent-grad);
+            color: #fff;
+            box-shadow: var(--accent-shadow)
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid rgba(0,0,0,0.06);
+            color: var(--muted)
+        }
+
+        /* ---------- Hero ---------- */
+        .hero {
+            max-width: 1200px;
+            margin: 28px auto;
+            padding: 36px 28px;
+            display: grid;
+            grid-template-columns: 1fr 520px;
+            gap: 36px;
+            align-items: center
+        }
+
+        .hero-left {
+            padding: 24px
+        }
+
+        h1 {
+            font-size: 42px;
+            line-height: 1.02;
+            margin: 0 0 16px
+        }
+
+        p.lead {
+            color: var(--muted);
+            margin: 0 0 22px;
+            font-size: 16px
+        }
+
+        .pills {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 22px
+        }
+
+        .pill {
+            background: linear-gradient(90deg,rgba(255,255,255,0.7),rgba(255,255,255,0.5));
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-weight: 700;
+            color: var(--muted);
+            border: 1px solid rgba(0,0,0,0.04)
+        }
+
+        /* mockup */
+        .mockup-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .mockup {
+            width: 100%;
+            max-width: 520px;
+            border-radius: 18px;
+            padding: 22px;
+            background: linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.85));
+            box-shadow: 0 20px 50px rgba(15,15,20,0.06);
+            border: 1px solid rgba(0,0,0,0.04);
+            position: relative;
+            overflow: visible
+        }
+
+        /* Kanban-style columns */
+        .board {
+            display: flex;
+            gap: 18px
+        }
+
+        .col {
+            width: 220px;
+            background: linear-gradient(180deg,rgba(255,255,255,0.98),rgba(250,250,252,0.98));
+            border-radius: 12px;
+            padding: 14px;
+            border: 1px solid rgba(0,0,0,0.03)
+        }
+
+            .col h4 {
+                margin: 0 0 10px;
+                font-size: 18px
+            }
+
+            .col .badge {
+                display: inline-block;
+                padding: 6px 8px;
+                border-radius: 8px;
+                font-weight: 700;
+                background: var(--badge);
+                color: #5b4a15;
+                margin-left: 8px;
+                font-size: 13px
+            }
+
+        .card {
+            background: #fff;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            box-shadow: 0 6px 18px rgba(10,10,10,0.04);
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+            .card h5 {
+                margin: 0 0 6px;
+                font-size: 15px
+            }
+
+            .card p {
+                margin: 0;
+                color: var(--muted);
+                font-size: 13px
+            }
+
+            .card .meta {
+                margin-top: 10px;
+                font-size: 12px;
+                color: #9b9b9b
+            }
+
+        /* Floating / animation */
+        .mockup {
+            animation: float 6s ease-in-out infinite
+        }
         @@keyframes float {
-            0%, 100%
+            0%
 
         {
-            transform: translateY(0);
+            transform: translateY(0) rotate(-0.2deg)
         }
 
         50% {
-            transform: translateY(-10px);
+            transform: translateY(-10px) rotate(0.3deg)
         }
 
+        100% {
+            transform: translateY(0) rotate(-0.2deg)
+        }
+
+        }
+
+        /* small decorative blob */
+        .hero .blob {
+            position: absolute;
+            right: -60px;
+            top: -40px;
+            width: 240px;
+            height: 240px;
+            border-radius: 40px;
+            background: var(--accent-grad);
+            filter: blur(48px);
+            opacity: 0.25;
+            z-index: -1
+        }
+
+        /* ---------- Features ---------- */
+        .features {
+            max-width: 1200px;
+            margin: 36px auto;
+            padding: 18px 28px;
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 18px
+        }
+
+        .feature {
+            background: linear-gradient(180deg,rgba(255,255,255,0.96),#fff);
+            padding: 20px;
+            border-radius: 14px;
+            border: 1px solid rgba(0,0,0,0.04);
+            box-shadow: 0 12px 30px rgba(16,24,40,0.03);
+            transform: translateY(30px);
+            opacity: 0;
+            transition: all 600ms cubic-bezier(.2,.9,.2,1)
+        }
+
+            .feature.visible {
+                transform: translateY(0);
+                opacity: 1
+            }
+
+            .feature .icon {
+                width: 56px;
+                height: 56px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: var(--accent-grad);
+                color: #fff;
+                font-weight: 700;
+                margin-bottom: 12px
+            }
+
+            .feature h3 {
+                margin: 0 0 6px
+            }
+
+            .feature p {
+                margin: 0;
+                color: var(--muted)
+            }
+
+        /* CTA */
+        .cta {
+            max-width: 1100px;
+            margin: 36px auto;
+            padding: 36px;
+            border-radius: 18px;
+            background: linear-gradient(90deg,rgba(255,255,255,0.85),rgba(255,255,255,0.85));
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            border: 1px solid rgba(0,0,0,0.03);
+            box-shadow: 0 16px 40px rgba(10,10,10,0.04)
+        }
+
+            .cta .left h2 {
+                margin: 0 0 6px
+            }
+
+            .cta .left p {
+                margin: 0;
+                color: var(--muted)
+            }
+
+        /* responsive */
+        @@media (max-width:980px) {
+            .hero
+
+        {
+            grid-template-columns: 1fr;
+            gap: 18px;
+            padding: 16px
+        }
+
+        .mockup-wrap {
+            order: -1
+        }
+
+        .features {
+            grid-template-columns: 1fr;
+            gap: 12px;
+            padding: 12px
+        }
+
+        header {
+            padding: 14px
+        }
+
+        }
+
+        /* Buttons + micro */
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px
+        }
+
+        .small {
+            padding: 8px 10px;
+            border-radius: 10px;
+            font-weight: 700
         }
 
         footer {
-            text-align: center;
-            padding: 20px 0;
-            color: #999;
-            font-size: 0.9rem;
+            max-width: 1200px;
+            margin: 36px auto;
+            padding: 24px;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            justify-content: space-between
         }
+
+        /* subtle hover */
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 22px 50px rgba(255,77,152,0.14);
+            transition: transform 0.5s ease;
+            
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            transition: transform 0.5s ease;
+        }
+
     </style>
 </head>
 <body>
-
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg bg-white shadow-sm fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="#">EinarTask</a>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="container">
-            <div class="row align-items-center   g-5">
-                <!-- Sol taraf (Metin) -->
-                <div class="col-md-6">
-                    <h1 class="hero-title">Görevlerini Kolayca Yönet</h1>
-                    <p class="hero-desc">EinarTask ile işlerin kontrolünü eline al. Görevleri planla, takip et ve başarıya ulaş.</p>
-                    <a href="/Account/Login" class="btn-domates">Başla</a>
-                </div>
-
-                <!-- Sağ taraf (Görsel) -->
-                <div class="col-md-6   text-center">
-                    <div class=" ">
-                        <img src="/assets/img/TaskHomeDesign.png" alt="Görev Yönetimi Görseli" class="illustration img-fluid">
-                    </div>
-                </div>
-
-                <div>
-                   
-
-                </div>
-                
+    <header>
+        <div class="logo">
+            <div class="mark">ET</div>
+            <div style="line-height:1">
+                <div style="font-weight:700">EinarTask</div>
+                <div style="font-size:12px;color:var(--muted)">Modern Task Manager</div>
             </div>
         </div>
-    </section>
 
-    <!-- Footer -->
+        <nav class="nav">
+            <a href="#features">Özellikler</a>
+            <a href="#how">Nasıl Çalışır</a>
+            <a href="@Url.Action("Login", "Account")" class="btn btn-ghost small">Giriş Yap</a>
+            <button class="btn btn-primary" onclick="location.href='@Url.Action("DemoApp", "Home")'">
+                Canlı Demo
+            </button>
+
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" aria-label="Hero">
+            <div class="hero-left">
+                <h1>EinarTask ile görevlerini <span style="background:linear-gradient(90deg,var(--grad-from),var(--grad-to));-webkit-background-clip:text;color:transparent">daha hızlı</span> ve düzenli yönet.</h1>
+                <p class="lead">Sürükle-bırak panolar, esnek notlandırma, sınırsız task-type ve modern arayüz ile takımınızın üretkenliğini artırın.</p>
+
+                <div class="pills">
+                    <div class="pill">Sürükle & Bırak</div>
+                    <div class="pill">Dinamik Quiz & Not</div>
+                    <div class="pill">Kullanıcı Yönetimi</div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="location.href='@Url.Action("DemoApp", "Home")' >Canlı Demo Göster</button>
+                    <button class="btn btn-ghost">GitHub</button>
+                </div>
+
+                <div style="margin-top:18px;color:var(--muted);font-size:13px">Renkler uygulamanın mevcut paletiyle uyumlu olacak şekilde ayarlandı — butonlar, badge'ler ve vurgu renkleri ekran görüntünüzden esinlenilerek seçildi.</div>
+            </div>
+
+            <div class="mockup-wrap">
+                <div class="mockup" role="img" aria-label="EinarTask mockup">
+                    <div class="blob"></div>
+                    <div style="display:flex;gap:14px;align-items:flex-start;justify-content:center">
+                        <div class="board">
+                            <div class="col">
+                                <h4>ToDo <span class="badge">1</span></h4>
+                                <div class="card">
+                                    <h5>Veri Tabanı İlişkileri</h5>
+                                    <p>İlişkiler Oluşturulacak</p>
+                                    <div class="meta">Vade: 18 Haz 2025</div>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <h4>Doing <span class="badge">2</span></h4>
+                                <div class="card">
+                                    <h5>Codefirst MVC Tabloları</h5>
+                                    <p>Migration eklenecek</p>
+                                    <div class="meta">Vade: 18 Haz 2025</div>
+                                </div>
+                                <div class="card">
+                                    <h5>Yapılacaklar Listesi</h5>
+                                    <p>Mockup hazırlanacak</p>
+                                    <div class="meta">Vade: 14 Eyl 2025</div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features" aria-label="Features">
+            <div class="feature reveal">
+                <div class="icon">➤</div>
+                <h3>Sürükle & Bırak Panolar</h3>
+                <p>Projeler ve görevler arası hızlı taşıma ile planlama basitleşir.</p>
+            </div>
+            <div class="feature reveal">
+                <div class="icon">⚙️</div>
+                <h3>Esnek Notlandırma</h3>
+                <p>Sınırsız quiz ve dinamik puanlama sistemi ile esneklik sağlayın.</p>
+            </div>
+            <div class="feature reveal">
+                <div class="icon">🔒</div>
+                <h3>Hızlı Planlama</h3>
+                <p>Planlarınızı istediğiniz gibi yönetebilirsiniz</p>
+            </div>
+        </section>
+
+        <section id="how" style="max-width:1100px;margin:10px auto;padding:18px 28px">
+            <div style="display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap">
+                <div style="flex:1;min-width:320px">
+                    <h3>Neden EinarTask?</h3>
+                    <p style="color:var(--muted)">Üretkenliği artıran küçük ama etkili fikirler: kolay kurulabilir yapı, minimal UI, güçlü yetenekler. Projeyi birkaç dakika içinde kurun ve kullanmaya başlayın.</p>
+
+                    <ol style="color:var(--muted)">
+                        <li>Kurulum: Dotnet restore & run</li>
+                        <li>Hızlı Demo: örnek kullanıcılarla test edin</li>
+                        <li>Özelleştirme: renk paleti ve modüller kolayca değişir</li>
+                    </ol>
+
+                </div>
+                <div style="width:320px">
+                    <div style="padding:16px;border-radius:12px;background:linear-gradient(180deg,var(--panel),#fff);border:1px solid rgba(0,0,0,0.04)">
+                        <h4 style="margin:0 0 8px">Kurulum Hızlı Başlangıç</h4>
+                        <pre style="margin:0;padding:8px;background:#f6f7fb;border-radius:8px;font-size:13px;color:#444">git clone &amp; dotnet run</pre>
+                        <div style="margin-top:12px;display:flex;gap:8px">
+                            <button class="btn small btn-primary">Repo</button>
+                            <button class="btn small btn-ghost">Dokümantasyon</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="demo" class="cta">
+            <div class="left">
+                <h2>Hemen Deneyin</h2>
+                <p>Ücretsiz demo isteyin veya kaynak kodu inceleyin. Kurulum kolay, entegrasyon hızlı.</p>
+            </div>
+            <div style="display:flex;gap:12px;align-items:center">
+                <button class="btn btn-primary">Demo Talep Et</button>
+                <button class="btn btn-ghost">İndir</button>
+            </div>
+        </section>
+
+    </main>
+
     <footer>
-        © 2025 EinarTask. Tüm hakları saklıdır.
+        <div>&copy; 2025 EinarTask. Tüm hakları saklıdır.</div>
+        <div style="display:flex;gap:12px;color:var(--muted)"><div>Gizlilik</div><div>Destek</div></div>
     </footer>
 
+    <script>
+        // Basit scroll-reveal: IntersectionObserver
+        const reveals = document.querySelectorAll('.reveal');
+        const io = new IntersectionObserver((entries)=>{
+          entries.forEach(e=>{
+            if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}
+          })
+        },{threshold:0.12});
+        reveals.forEach(r=>io.observe(r));
+
+        // küçük: CTA butonuna tıklama efekti
+        document.querySelectorAll('.btn').forEach(b=>{
+          b.addEventListener('mousedown',()=>b.style.transform='translateY(1px)');
+          b.addEventListener('mouseup',()=>b.style.transform='');
+        });
+    </script>
 </body>
 </html>
