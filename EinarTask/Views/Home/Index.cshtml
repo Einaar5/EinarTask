@@ -11,6 +11,8 @@
     <title>EinarTask — Modern Task Manager</title>
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6.6.0 (en güncel sürüm) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
     <style>
         /* --------------------
                EinarTask Landing Page
@@ -21,16 +23,19 @@
             --bg: #f7f8fa;
             --panel: #ffffff;
             --muted: #6b6b6f;
-            --grad-from: #ff6b6b; /* sıcak domates/pembe */
-            --grad-to: #ff4d98;
-            --accent-grad: linear-gradient(135deg,var(--grad-from),var(--grad-to));
-            --accent-shadow: 0 12px 30px rgba(255,77,152,0.12);
+            /* Daha turuncu → pembe tonları */
+            --grad-from: #ff7e5f; /* sıcak turuncu/mercan */
+            --grad-to: #ff4d7e; /* turuncu-pembe (nar çiçeği) */
+            --accent-grad: linear-gradient(135deg, var(--grad-from), var(--grad-to));
+            --accent-shadow: 0 12px 30px rgba(255, 94, 126, 0.18); /* gölge pembe/turuncu */
             --badge: #ffd54a; /* sarı */
             --danger: #ff4747;
             --glass: rgba(255,255,255,0.7);
             --radius: 14px;
             color-scheme: light;
         }
+
+
 
         * {
             box-sizing: border-box
@@ -402,6 +407,7 @@
         }
 
     </style>
+
 </head>
 <body>
     <header>
@@ -485,15 +491,19 @@
                 <p>Projeler ve görevler arası hızlı taşıma ile planlama basitleşir.</p>
             </div>
             <div class="feature reveal">
-                <div class="icon">⚙️</div>
-                <h3>Esnek Notlandırma</h3>
-                <p>Sınırsız quiz ve dinamik puanlama sistemi ile esneklik sağlayın.</p>
+                <div class="icon"><i class="fa-solid fa-list-check"></i></div>
+                <h3>Görev Planlama</h3>
+                <p>Görevleri oluşturun, ekibinize atayın ve ilerlemeyi kolayca takip edin.</p>
             </div>
+
             <div class="feature reveal">
-                <div class="icon">🔒</div>
-                <h3>Hızlı Planlama</h3>
-                <p>Planlarınızı istediğiniz gibi yönetebilirsiniz</p>
+                <div class="icon">
+                    <i class="fa-solid fa-sliders-h"></i>
+                </div>
+                <h3>Esnek Görev Yönetimi</h3>
+                <p>Görevlerinizi dilediğiniz gibi organize edin, önceliklendirin ve kolayca yönetin.</p>
             </div>
+
         </section>
 
         <section id="how" style="max-width:1100px;margin:10px auto;padding:18px 28px">
