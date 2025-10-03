@@ -385,10 +385,24 @@ namespace EinarTask.Controllers
         }
 
 
-        public IActionResult Settings()
+        public async Task<IActionResult> Settings()
         {
-            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier); // buada ClaimTypes.NameIdentifier kullanarak kullanıcı ID'sini alıyorum
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdStr))
+                return Unauthorized();
 
+            var userId = int.Parse(userIdStr);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            var userInfo = await _context.Users
+                .Where(u => u.Id == userId)
+                .Select(u => new { u.FirstName, u.LastName })
+                .FirstOrDefaultAsync();
+
+            ViewBag.UserFirstandLastName = $"{userInfo?.FirstName} {userInfo?.LastName}";
+
+            
+            ViewBag.UserImage = user.UserImage;
+            ViewBag.UserFirstandLastName = $"{user?.FirstName} {user?.LastName}";
 
             return View();
         }

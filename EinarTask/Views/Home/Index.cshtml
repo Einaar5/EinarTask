@@ -14,6 +14,46 @@
     <!-- Font Awesome 6.6.0 (en güncel sürüm) -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
     <style>
+
+        /* --- Loading ekranı --- */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff; /* Arka plan rengi */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        #loader.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Logo animasyonu */
+        .loader-logo {
+            width: 120px;
+            height: 120px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @@keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+    
         /* --------------------
                EinarTask Landing Page
                Single-file HTML + CSS + JS
@@ -430,6 +470,8 @@
         </nav>
     </header>
 
+
+
     <main>
         <section class="hero" aria-label="Hero">
             <div class="hero-left">
@@ -483,7 +525,10 @@
                 </div>
             </div>
         </section>
-
+        <!-- 🔹 Yükleme animasyonu -->
+        <div id="loader">
+            <img src="~/assets/img/LoadingLogo.png" alt="Logo" class="loader-logo" />
+        </div>
         <section id="features" class="features" aria-label="Features">
             <div class="feature reveal">
                 <div class="icon">➤</div>
@@ -564,6 +609,19 @@
         document.querySelectorAll('.btn').forEach(b=>{
           b.addEventListener('mousedown',()=>b.style.transform='translateY(1px)');
           b.addEventListener('mouseup',()=>b.style.transform='');
+        });
+    </script>
+
+    <script>
+        // Sayfa yüklendiğinde 1.5 saniye sonra loader kaybolsun
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('fade-out');
+                setTimeout(() => {
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('main-content').style.display = 'block';
+                }, 500); // fade-out süresi
+            }, 1500); // 1.5 saniye gösterim süresi
         });
     </script>
 </body>

@@ -1,6 +1,7 @@
 ﻿@model EinarTask.Models.LoginViewModel
 @{
     ViewData["Title"] = "Giriş Yap";
+    Layout = null;
 }
 
 <!DOCTYPE html>
@@ -8,68 +9,209 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"]</title>
+    <title>@ViewData["Title"] | EinarTask</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
     <style>
+
+        /* === Global Stil === */
         body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(-45deg, #fff5f5, #fff0eb, #ffe8f0, #fff9f6);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
         }
 
-        .login-container {
-            max-width: 500px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        @@keyframes gradientShift {
+            0%
+
+        {
+            background-position: 0% 50%;
         }
 
-        .login-form .btn-primary {
-            background-color: #ff6347;
+        50% {
+            background-position: 100% 50%;
+        }
+
+        100% {
+            background-position: 0% 50%;
+        }
+
+        }
+
+        /* === Login Kartı === */
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: #ffffffcc;
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 35px;
+            box-shadow: 0 12px 35px rgba(255, 107, 107, 0.15);
+            transition: all 0.3s ease;
+        }
+
+            .login-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 16px 45px rgba(255, 107, 107, 0.25);
+            }
+
+        /* === Logo / Başlık === */
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            gap: 10px;
+        }
+
+        .brand-logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.2rem;
+            box-shadow: 0 3px 10px rgba(255, 107, 107, 0.3);
+        }
+
+        .brand-text {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #2b2b2b;
+        }
+
+        .brand-sub {
+            font-size: 0.85rem;
+            color: #9e9e9e;
+        }
+
+        h2 {
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.4rem;
+            background: linear-gradient(90deg, #ff6b6b, #ff8e53, #ffc3a0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 25px;
+        }
+
+        /* === Input Alanları === */
+        .form-control {
+            border-radius: 12px;
+            border: 1.5px solid #e7e7e7;
+            padding: 10px 14px;
+            transition: all 0.3s ease;
+        }
+
+            .form-control:focus {
+                border-color: #ff6b6b;
+                box-shadow: 0 0 8px rgba(255, 107, 107, 0.25);
+            }
+
+        /* === Buton === */
+        .btn-login {
+            background: #fff;
+            color: #ff6b6b;
+            font-weight: 600;
             border: none;
-            font-weight: bold;
+            border-radius: 12px;
+            padding: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.15);
         }
 
-            .login-form .btn-primary:hover {
-                background-color: #e5533d;
+            .btn-login:hover {
+                background: linear-gradient(90deg, #ff6b6b, #ff8e53, #ffc3a0);
+                color: #fff;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 18px rgba(255, 107, 107, 0.25);
             }
 
         .validation-summary-errors {
             color: #dc3545;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        /* === Footer Link === */
+        .register-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+            .register-link a {
+                color: #ff6b6b;
+                font-weight: 500;
+                text-decoration: none;
+            }
+
+                .register-link a:hover {
+                    text-decoration: underline;
+                }
+
+        /* === Responsive === */
+        @@media (max-width: 576px) {
+            .login-card
+
+        {
+            padding: 30px 20px;
+        }
+
         }
     </style>
 </head>
+
 <body>
-    <div class="login-container">
-        <h2 class="text-center" style="color: #ff6347;">Giriş Yap</h2>
-        <hr />
+    
+    <div class="login-card">
+        <div class="brand">
+            <div class="brand-logo">ET</div>
+            <div>
+                <div class="brand-text">EinarTask</div>
+                <div class="brand-sub">Modern Task Manager</div>
+            </div>
+        </div>
+
+        <h2>Hesabınıza Giriş Yapın</h2>
+
         <form asp-action="Login" method="post">
             <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
             <div class="mb-3">
                 <label asp-for="Email" class="form-label">Email</label>
                 <input asp-for="Email" class="form-control" required />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
+
             <div class="mb-3">
                 <label asp-for="Password" class="form-label">Şifre</label>
                 <input asp-for="Password" type="password" class="form-control" required />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
+
             <div class="mb-3 form-check">
                 <input asp-for="RememberMe" class="form-check-input" />
                 <label asp-for="RememberMe" class="form-check-label">Beni Hatırla</label>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Giriş Yap</button>
-            <div class="mt-3 text-center">
-                <a asp-action="Register" class="text-decoration-none">Hesabın yok mu? Kayıt Ol</a>
+
+            <button type="submit" class="btn btn-login w-100">Giriş Yap</button>
+
+            <div class="register-link">
+                <a asp-action="Register">Hesabın yok mu? Kayıt Ol</a>
             </div>
         </form>
     </div>
-
+   
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
 </body>
 </html>
