@@ -1,4 +1,17 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿
+// Sayfa yüklendiğinde 1.5 saniye sonra loader kaybolsun
 
-// Write your JavaScript code.
+loadingAnimate();
+
+function loadingAnimate(){
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            document.getElementById('loader').classList.add('fade-out');
+            setTimeout(() => {
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            }, 500); // fade-out süresi
+        }, 1500); // 1.5 saniye gösterim süresi
+    });
+
+}

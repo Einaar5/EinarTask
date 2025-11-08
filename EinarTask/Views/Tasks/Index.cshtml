@@ -35,7 +35,7 @@
     <div class="row g-3">
         @foreach (var taskType in Model.TaskTypes ?? Enumerable.Empty<EinarTask.Models.TaskType>())
         {
-            <div class="col-md-3">
+            <div class="col-md-3 ">
                 <div class="column p-3 border rounded bg-light"
                      data-tasktype-id="@taskType.Id"
                      ondragover="allowDrop(event)"
@@ -84,6 +84,7 @@
             </div>
         }
     </div>
+
 </div>
 
 <!-- Görev Ekle Modal -->

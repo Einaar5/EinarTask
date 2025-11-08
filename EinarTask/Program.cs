@@ -43,7 +43,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
-
+app.UseStaticFiles();
 // 4. AUTHENTICATION ve AUTHORIZATION middleware'lerini ekleyin
 app.UseAuthentication(); // Bu çok önemli! Identity için gerekli
 app.UseAuthorization();
