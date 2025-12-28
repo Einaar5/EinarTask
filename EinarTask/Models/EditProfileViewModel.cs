@@ -9,6 +9,5 @@ public class EditProfileViewModel
 
     public string UserImage { get; set; } = "";
 
-
     public UserDto? userDto { get; set; }
 }

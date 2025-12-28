@@ -1,5 +1,4 @@
 ﻿@{
-	//.NET
 	var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
 	var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
 }
@@ -19,106 +18,475 @@
 	<link rel="stylesheet" href="~/css/taskCss.css" />
 	<link rel="stylesheet" href="~/css/loading.css" asp-append-version="true" />
 	<style>
-		/* --- Loading ekranı --- */
-		
-		.user-dropdown .user-avatar {
-			width: 40px;
-			height: 40px;
-			border-radius: 50%;
-			background: var(--primary-gradient);
-			color: white;
-			font-weight: bold;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			font-size: 1rem;
+		/* ==================== CSS Variables ==================== */
+		:root {
+			--primary: #ff6347;
+			--primary-700: #d64531;
+			--primary-gradient: linear-gradient(135deg, #ff6347 0%, #d64531 100%);
+			--bg: #f8f9fa;
+			--surface: #ffffff;
+			--card-bg: #ffffff;
+			--text: #1a1a1a;
+			--muted: #6c757d;
+			--border: rgba(0,0,0,0.08);
+			--shadow: 0 2px 15px rgba(0,0,0,0.08);
+			--shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
 		}
 
-		.user-dropdown .dropdown-toggle {
-			display: flex;
-			align-items: center;
-			gap: 0.5rem; /* Avatar ile isim arasına boşluk */
-			text-decoration: none;
-			color: #000;
-		}
-
-			.user-dropdown .dropdown-toggle:hover {
-				text-decoration: none;
-			}
-
-		/* -------- Dark Vars -------- */
 		[data-theme="dark"] {
 			--primary: #ff6347;
 			--primary-700: #d64531;
-			--primary-gradient: linear-gradient(90deg, #ff6347 0%, #d64531 100%);
-			--bg: #181a1b; /* sayfa arka planı */
-			--surface: #202325; /* sidebar / navbar */
-			--card-bg: #2a2d30; /* kart arka planı */
-			--text: #f1f1f1;
-			--muted: #a8b0b8;
+			--primary-gradient: linear-gradient(135deg, #ff6347 0%, #d64531 100%);
+			--bg: #0f1419;
+			--surface: #1a1f2e;
+			--card-bg: #232936;
+			--text: #f1f3f5;
+			--muted: #a8b3cf;
 			--border: rgba(255,255,255,0.08);
-			--shadow: 0 4px 18px rgba(0,0,0,0.5);
+			--shadow: 0 4px 20px rgba(0,0,0,0.5);
+			--shadow-lg: 0 10px 40px rgba(0,0,0,0.6);
 		}
 
-		/* -------- Uygulama -------- */
-		body, .main-content, .sidebar {
+		/* ==================== Base Styles ==================== */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
 			background: var(--bg);
 			color: var(--text);
-			transition: background .2s ease, color .2s ease;
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			transition: background 0.3s ease, color 0.3s ease;
+			overflow-x: hidden;
 		}
 
-		/* Sidebar */
+		/* ==================== Sidebar ==================== */
 		.sidebar {
+			position: fixed;
+			left: 0;
+			top: 0;
+			width: 280px;
+			height: 100vh;
 			background: var(--surface);
+			border-right: 2px solid var(--border);
+			transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+			z-index: 1000;
+			box-shadow: var(--shadow-lg);
+			overflow-y: auto;
 		}
 
-			.sidebar .nav-link {
-				color: var(--text);
-				border-radius: 8px;
-				margin: 2px 8px;
+			.sidebar::-webkit-scrollbar {
+				width: 6px;
 			}
 
-				.sidebar .nav-link.active,
-				.sidebar .nav-link:hover {
-					background: var(--primary-gradient);
-					color: #fff;
-				}
+			.sidebar::-webkit-scrollbar-track {
+				background: transparent;
+			}
 
-		/* Navbar */
-		.top-navbar {
-			background: var(--surface);
-			padding: 8px 16px;
-			border-bottom: 1px solid var(--border);
-			display: flex;
-			align-items: center;
+			.sidebar::-webkit-scrollbar-thumb {
+				background: var(--muted);
+				border-radius: 10px;
+			}
+
+		.sidebar-header {
+			padding: 24px 20px;
+			background: var(--primary-gradient);
+			color: white;
+			font-size: 1.5rem;
+			font-weight: 700;
+			text-align: center;
+			letter-spacing: 1px;
+			box-shadow: 0 4px 15px rgba(255, 99, 71, 0.3);
+			position: relative;
+			overflow: hidden;
 		}
 
-		/* Dropdown */
-		.user-dropdown .dropdown-menu {
-			background: var(--card-bg);
+			.sidebar-header::before {
+				content: '';
+				position: absolute;
+				top: -50%;
+				left: -50%;
+				width: 200%;
+				height: 200%;
+				background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+				animation: shine 3s infinite;
+			}
+
+		@@keyframes shine {
+			0%, 100%
+
+		{
+			transform: translateX(-100%) translateY(-100%) rotate(45deg);
+		}
+
+		50% {
+			transform: translateX(100%) translateY(100%) rotate(45deg);
+		}
+
+		}
+
+		.sidebar-menu {
+			padding: 16px 0;
+		}
+
+		.sidebar .nav-link {
 			color: var(--text);
-			border: 1px solid var(--border);
+			padding: 14px 24px;
+			margin: 4px 12px;
+			border-radius: 12px;
+			transition: all 0.3s ease;
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			font-weight: 500;
+			position: relative;
+			overflow: hidden;
+		}
+
+			.sidebar .nav-link::before {
+				content: '';
+				position: absolute;
+				left: 0;
+				top: 0;
+				height: 100%;
+				width: 4px;
+				background: var(--primary-gradient);
+				transform: translateX(-100%);
+				transition: transform 0.3s ease;
+			}
+
+			.sidebar .nav-link:hover {
+				background: var(--primary-gradient);
+				color: white;
+				transform: translateX(5px);
+				box-shadow: 0 4px 15px rgba(255, 99, 71, 0.3);
+			}
+
+				.sidebar .nav-link:hover::before {
+					transform: translateX(0);
+				}
+
+			.sidebar .nav-link.active {
+				background: var(--primary-gradient);
+				color: white;
+				box-shadow: 0 4px 15px rgba(255, 99, 71, 0.3);
+			}
+
+			.sidebar .nav-link i {
+				font-size: 1.2rem;
+				transition: transform 0.3s ease;
+			}
+
+			.sidebar .nav-link:hover i {
+				transform: scale(1.2);
+			}
+
+			/* Logout Button Style */
+			.sidebar .nav-link[type="submit"] {
+				width: 90%;
+				background: transparent;
+			}
+
+				.sidebar .nav-link[type="submit"]:hover {
+					background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+				}
+
+		/* ==================== Main Content ==================== */
+		.main-content {
+			margin-left: 280px;
+			min-height: 100vh;
+			transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+			background: var(--bg);
+		}
+
+		/* ==================== Top Navbar ==================== */
+		.top-navbar {
+			background: var(--surface);
+			padding: 16px 24px;
+			border-bottom: 2px solid var(--border);
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			box-shadow: var(--shadow);
+			position: sticky;
+			top: 0;
+			z-index: 999;
+			backdrop-filter: blur(10px);
+		}
+
+		.mobile-menu-btn {
+			display: none;
+			background: var(--primary-gradient);
+			color: white;
+			border: none;
+			padding: 10px 16px;
+			border-radius: 10px;
+			transition: all 0.3s ease;
+		}
+
+			.mobile-menu-btn:hover {
+				transform: scale(1.1);
+				box-shadow: 0 4px 15px rgba(255, 99, 71, 0.3);
+			}
+
+		/* ==================== User Dropdown ==================== */
+		.user-dropdown {
+			position: relative;
+		}
+
+			.user-dropdown .user-avatar {
+				width: 45px;
+				height: 45px;
+				border-radius: 50%;
+				background: var(--primary-gradient);
+				color: white;
+				font-weight: 700;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 1.1rem;
+				box-shadow: 0 4px 15px rgba(255, 99, 71, 0.3);
+				transition: all 0.3s ease;
+			}
+
+			.user-dropdown .dropdown-toggle {
+				display: flex;
+				align-items: center;
+				gap: 12px;
+				text-decoration: none;
+				color: var(--text);
+				padding: 8px 16px;
+				border-radius: 12px;
+				transition: all 0.3s ease;
+				font-weight: 600;
+			}
+
+				.user-dropdown .dropdown-toggle:hover {
+					background: rgba(255, 99, 71, 0.1);
+					transform: translateY(-2px);
+				}
+
+					.user-dropdown .dropdown-toggle:hover .user-avatar {
+						transform: scale(1.1);
+						box-shadow: 0 6px 20px rgba(255, 99, 71, 0.4);
+					}
+
+			.user-dropdown .dropdown-menu {
+				background: var(--card-bg);
+				border: 2px solid var(--border);
+				border-radius: 16px;
+				box-shadow: var(--shadow-lg);
+				padding: 8px;
+				margin-top: 12px;
+				min-width: 220px;
+				animation: dropdownSlide 0.3s ease-out;
+			}
+
+		@@keyframes dropdownSlide {
+			from
+
+		{
+			opacity: 0;
+			transform: translateY(-10px);
+		}
+
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+
 		}
 
 		.user-dropdown .dropdown-item {
 			color: var(--text);
+			padding: 12px 16px;
+			border-radius: 10px;
+			transition: all 0.3s ease;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			font-weight: 500;
 		}
 
 			.user-dropdown .dropdown-item:hover {
 				background: var(--primary-gradient);
-				color: #fff;
+				color: white;
+				transform: translateX(5px);
 			}
 
-		/* Kartlar */
+		.user-dropdown .dropdown-divider {
+			border-color: var(--border);
+			margin: 8px 0;
+		}
+
+		/* ==================== Footer ==================== */
+		.footer {
+			background: var(--surface);
+			border-top: 2px solid var(--border);
+			padding: 20px 24px;
+			text-align: center;
+			color: var(--muted);
+			font-size: 0.9rem;
+		}
+
+			.footer a {
+				color: var(--primary);
+				text-decoration: none;
+				font-weight: 600;
+				transition: all 0.3s ease;
+			}
+
+				.footer a:hover {
+					color: var(--primary-700);
+					text-decoration: underline;
+				}
+
+		/* ==================== Loading Animation ==================== */
+		#loader {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: var(--surface);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			z-index: 9999;
+			transition: opacity 0.5s ease, visibility 0.5s ease;
+		}
+
+			#loader.hidden {
+				opacity: 0;
+				visibility: hidden;
+			}
+
+		.loader-logo {
+			width: 120px;
+			animation: logoFloat 2s ease-in-out infinite;
+		}
+
+		@@keyframes logoFloat {
+			0%, 100%
+
+		{
+			transform: translateY(0px);
+		}
+
+		50% {
+			transform: translateY(-20px);
+		}
+
+		}
+
+		/* ==================== Responsive Design ==================== */
+		@@media (max-width: 992px) {
+			.sidebar
+
+		{
+			transform: translateX(-100%);
+		}
+
+		.sidebar.active {
+			transform: translateX(0);
+		}
+
+		.main-content {
+			margin-left: 0;
+		}
+
+		.mobile-menu-btn {
+			display: block;
+		}
+
+		}
+
+		@@media (max-width: 576px) {
+			.sidebar
+
+		{
+			width: 100%;
+		}
+
+		.user-dropdown .dropdown-toggle span {
+			display: none;
+		}
+
+		.top-navbar {
+			padding: 12px 16px;
+		}
+
+		}
+
+		/* ==================== Page Transitions ==================== */
+		.container-fluid {
+			animation: fadeInContent 0.5s ease-out;
+		}
+
+		@@keyframes fadeInContent {
+			from
+
+		{
+			opacity: 0;
+			transform: translateY(20px);
+		}
+
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+
+		}
+
+		/* ==================== Scroll Behavior ==================== */
+		html {
+			scroll-behavior: smooth;
+		}
+
+		/* ==================== Custom Scrollbar ==================== */
+		::-webkit-scrollbar {
+			width: 10px;
+			height: 10px;
+		}
+
+		::-webkit-scrollbar-track {
+			background: var(--bg);
+		}
+
+		::-webkit-scrollbar-thumb {
+			background: var(--primary-gradient);
+			border-radius: 10px;
+		}
+
+			::-webkit-scrollbar-thumb:hover {
+				background: linear-gradient(135deg, #d64531, #ff6347);
+			}
+
+		/* ==================== Utilities ==================== */
+		.text-gradient {
+			background: var(--primary-gradient);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			background-clip: text;
+		}
+
 		.card {
 			background: var(--card-bg) !important;
 			color: var(--text) !important;
-			border: 1px solid var(--border);
+			border: 2px solid var(--border);
+			border-radius: 16px;
 			box-shadow: var(--shadow);
+			transition: all 0.3s ease;
 		}
 
-		/* Yazılar */
-		h1, h2, h3, h4, h5 {
+			.card:hover {
+				box-shadow: var(--shadow-lg);
+				transform: translateY(-5px);
+			}
+
+		h1, h2, h3, h4, h5, h6 {
 			color: var(--text);
 		}
 
@@ -126,18 +494,58 @@
 			color: var(--muted) !important;
 		}
 
+		.btn-gradient-orange-pink {
+			background: linear-gradient(135deg, #ff512f, #dd2476);
+			color: #fff !important;
+			border: none;
+			border-radius: 16px;
+			padding: 14px 28px;
+			font-weight: 600;
+			display: inline-flex;
+			align-items: center;
+			gap: 10px;
+			transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+			box-shadow: 0 4px 15px rgba(255, 81, 47, 0.3);
+			position: relative;
+			overflow: hidden;
+		}
+
+			.btn-gradient-orange-pink::before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: -100%;
+				width: 100%;
+				height: 100%;
+				background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+				transition: left 0.5s;
+			}
+
+			.btn-gradient-orange-pink:hover::before {
+				left: 100%;
+			}
+
+			.btn-gradient-orange-pink:hover {
+				transform: translateY(-3px);
+				box-shadow: 0 8px 25px rgba(255, 81, 47, 0.4);
+			}
+
+			.btn-gradient-orange-pink:active {
+				transform: translateY(-1px);
+			}
 	</style>
-
-
 </head>
 <body>
 
+	<!-- Loading Screen -->
 	<div id="loader">
 		<img src="~/assets/img/LoadingLogo.png" alt="Logo" class="loader-logo" />
 	</div>
+
 	<!-- Sidebar -->
 	<div class="sidebar">
 		<div class="sidebar-header">
+			<i class="bi bi-kanban-fill me-2"></i>
 			<span>EinarTask</span>
 		</div>
 		<div class="sidebar-menu d-flex flex-column vh-100">
@@ -145,54 +553,69 @@
 				<li class="nav-item">
 					<a class="nav-link @(currentController == "Tasks" && currentAction == "Index" ? "active" : "")"
 					   asp-controller="Tasks" asp-action="Index">
-						<i class="bi bi-house-door"></i> Anasayfa
+						<i class="bi bi-house-door"></i>
+						<span>Anasayfa</span>
 					</a>
 				</li>
-
 				<li class="nav-item">
 					<a class="nav-link @(currentController == "Tasks" && currentAction == "EditProfile" ? "active" : "")"
 					   asp-controller="Tasks" asp-action="EditProfile">
-						<i class="bi bi-person"></i> Profil
+						<i class="bi bi-person"></i>
+						<span>Profil</span>
 					</a>
 				</li>
-
 				<li class="nav-item">
-					<a class="nav-link @(currentController == "Tasks" && currentAction == "Settings" ? "active" : "")" asp-controller="Tasks" asp-action="Settings">
-
-						<i class="bi bi-gear me-2"></i> Ayarlar
+					<a class="nav-link @(currentController == "Tasks" && currentAction == "Settings" ? "active" : "")"
+					   asp-controller="Tasks" asp-action="Settings">
+						<i class="bi bi-gear"></i>
+						<span>Ayarlar</span>
 					</a>
 				</li>
-
 				<li class="nav-item">
 					<a class="nav-link" href="https://github.com/Einaar5" target="_blank">
-						<i class="bi bi-code-slash"></i> Geliştirici
+						<i class="bi bi-code-slash"></i>
+						<span>Geliştirici</span>
 					</a>
+				</li>
+
+				<!-- Yeni görev ve tasktype butonları çıkış butonunun üstünde -->
+				<li class="nav-item mt-auto">
+					<div class="mb-2 header-buttons w-100">
+						<button class="btn-gradient-orange-pink w-100" style="border-radius:0px !important;" data-bs-toggle="modal" data-bs-target="#createTaskModal">
+							<i class="bi bi-plus-circle"></i>
+							Yeni Görev Ekle
+						</button>
+						<button class="btn-gradient-orange-pink w-100" style="border-radius:0px !important;" data-bs-toggle="modal" data-bs-target="#createNewTaskTypeModal">
+							<i class="bi bi-folder-plus"></i>
+							Yeni TaskType Ekle
+						</button>
+					</div>
 				</li>
 
 				<!-- Çıkış butonu -->
-				<li class="nav-item mt-auto">
-					<form asp-controller="Account" asp-action="Logout" method="post" class="w-100">
+				<li class="nav-item">
+					<form asp-controller="Account" asp-action="Logout" method="post" class="w-100 px-3">
 						@Html.AntiForgeryToken()
-						<button type="submit" class="nav-link text-start w-75" style=" border:none;">
-							<i class="bi bi-box-arrow-right"></i> Çıkış Yap
+						<button type="submit" class="nav-link text-start w-74">
+							<i class="bi bi-box-arrow-right"></i>
+							<span>Çıkış Yap</span>
 						</button>
 					</form>
 				</li>
 			</ul>
 		</div>
-
 	</div>
-
 	<!-- Main content -->
 	<div class="main-content d-flex flex-column min-vh-100">
 		<!-- Top Navbar -->
 		<nav class="top-navbar">
-			<button class="btn btn-sm btn-outline-dark mobile-menu-btn">
+			<button class="btn mobile-menu-btn">
 				<i class="bi bi-list"></i>
 			</button>
+
 			<div class="user-dropdown dropdown ms-auto">
-				<a class="dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
-					<div class="user-avatar d-flex align-items-center justify-content-center">
+				<a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+					<div class="user-avatar">
 						@if (string.IsNullOrEmpty(ViewBag.UserImage as string))
 						{
 							@ViewBag.UserFirstandLastName?.Substring(0, 1)
@@ -202,26 +625,33 @@
 							<img src="~/assets/userImage/@ViewBag.UserImage"
 								 alt="User Avatar"
 								 class="rounded-circle"
-								 style="width:40px; height:40px; object-fit:cover;" />
+								 style="width:45px; height:45px; object-fit:cover;" />
 						}
 					</div>
-
-
-					<span class="ms-2">@ViewBag.UserFirstandLastName</span>
+					<span>@ViewBag.UserFirstandLastName</span>
 				</a>
 				<ul class="dropdown-menu dropdown-menu-end">
-					<li><a class="dropdown-item" asp-controller="Tasks" asp-action="EditProfile"><i class="bi bi-person me-2"></i>Profil</a></li>
-					<li><a class="dropdown-item" asp-controller="Account" asp-action="Settings"><i class="bi bi-gear me-2"></i>Ayarlar</a></li>
+					<li>
+						<a class="dropdown-item" asp-controller="Tasks" asp-action="EditProfile">
+							<i class="bi bi-person"></i>Profil
+						</a>
+					</li>
+					<li>
+						<a class="dropdown-item" asp-controller="Account" asp-action="Settings">
+							<i class="bi bi-gear"></i>Ayarlar
+						</a>
+					</li>
 					<li><hr class="dropdown-divider"></li>
 					<li>
 						<form asp-controller="Account" asp-action="Logout" method="post">
 							@Html.AntiForgeryToken()
-							<button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right me-2"></i>Çıkış Yap</button>
+							<button type="submit" class="dropdown-item">
+								<i class="bi bi-box-arrow-right"></i>Çıkış Yap
+							</button>
 						</form>
 					</li>
 				</ul>
 			</div>
-
 		</nav>
 
 		<!-- Main Body -->
@@ -231,60 +661,104 @@
 
 		<!-- Footer -->
 		<footer class="footer mt-auto">
-			&copy; 2025 - EinarTask - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+			<div>
+				&copy; 2025 - <strong class="text-gradient">EinarTask</strong> -
+				<a asp-controller="Home" asp-action="Privacy">Privacy</a>
+			</div>
 		</footer>
 	</div>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
+	<!-- Scripts -->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 	<script>
+		// Mobile Menu Toggle
 		document.querySelector('.mobile-menu-btn').addEventListener('click', function () {
 			document.querySelector('.sidebar').classList.toggle('active');
 		});
-	</script>
-	<!-- JS: Radyo ile tema değişimi (settings.cshtml'in altına ekle) -->
-	<script>
+
+		// Close sidebar when clicking outside on mobile
+		document.addEventListener('click', function(event) {
+			const sidebar = document.querySelector('.sidebar');
+			const menuBtn = document.querySelector('.mobile-menu-btn');
+
+			if (window.innerWidth <= 992 &&
+				!sidebar.contains(event.target) &&
+				!menuBtn.contains(event.target) &&
+				sidebar.classList.contains('active')) {
+				sidebar.classList.remove('active');
+			}
+		});
+
+		// Loading Screen
+		window.addEventListener('load', function() {
+			setTimeout(() => {
+				document.getElementById('loader').classList.add('hidden');
+			}, 500);
+		});
+
+		// Theme Handling
 		(function(){
-		  const lightRadio = document.getElementById('lightMode');
-		  const darkRadio = document.getElementById('darkMode');
-		  const root = document.documentElement;
+			const lightRadio = document.getElementById('lightMode');
+			const darkRadio = document.getElementById('darkMode');
 
-		  // Başlangıçta seçili olanı uygula
-		  function applyThemeFromRadios() {
-			if (darkRadio && darkRadio.checked) {
-			  document.documentElement.setAttribute('data-theme', 'dark');
-			} else {
-			  document.documentElement.removeAttribute('data-theme');
+			function applyThemeFromRadios() {
+				if (darkRadio && darkRadio.checked) {
+					document.documentElement.setAttribute('data-theme', 'dark');
+				} else {
+					document.documentElement.removeAttribute('data-theme');
+				}
 			}
-		  }
 
-		  // event listener
-		  [lightRadio, darkRadio].forEach(r => {
-			if (!r) return;
-			r.addEventListener('change', applyThemeFromRadios);
-		  });
-
-		  // İlk uygulama
-		  applyThemeFromRadios();
-
-		  // İsteğe bağlı: kullanıcının tercihini localStorage'da tutma
-		  [lightRadio, darkRadio].forEach(r => {
-			if (!r) return;
-			r.addEventListener('change', () => {
-			  if (darkRadio.checked) localStorage.setItem('site-theme','dark');
-			  else localStorage.removeItem('site-theme');
+			[lightRadio, darkRadio].forEach(r => {
+				if (!r) return;
+				r.addEventListener('change', applyThemeFromRadios);
 			});
-		  });
 
-		  // Sayfa yüklendiğinde localStorage kontrolü (varsa override)
-		  document.addEventListener('DOMContentLoaded', () => {
-			const saved = localStorage.getItem('site-theme');
-			if (saved === 'dark') {
-			  if (darkRadio) darkRadio.checked = true;
-			  applyThemeFromRadios();
-			}
-		  });
+			applyThemeFromRadios();
+
+			[lightRadio, darkRadio].forEach(r => {
+				if (!r) return;
+				r.addEventListener('change', () => {
+					if (darkRadio.checked) {
+						localStorage.setItem('site-theme','dark');
+					} else {
+						localStorage.removeItem('site-theme');
+					}
+				});
+			});
+
+			document.addEventListener('DOMContentLoaded', () => {
+				const saved = localStorage.getItem('site-theme');
+				if (saved === 'dark') {
+					if (darkRadio) darkRadio.checked = true;
+					applyThemeFromRadios();
+				}
+			});
 		})();
+
+		// Smooth scroll for navigation
+		document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+			anchor.addEventListener('click', function (e) {
+				e.preventDefault();
+				const target = document.querySelector(this.getAttribute('href'));
+				if (target) {
+					target.scrollIntoView({
+						behavior: 'smooth',
+						block: 'start'
+					});
+				}
+			});
+		});
+
+		// Add active state animation
+		document.querySelectorAll('.nav-link').forEach(link => {
+			link.addEventListener('click', function() {
+				this.style.animation = 'pulse 0.3s ease-out';
+				setTimeout(() => {
+					this.style.animation = '';
+				}, 300);
+			});
+		});
 	</script>
 
 	<script src="~/js/site.js"></script>

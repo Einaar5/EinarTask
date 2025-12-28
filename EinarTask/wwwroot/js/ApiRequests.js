@@ -128,6 +128,56 @@ $(document).on('submit', '#taskTypeForm', function (e) {
     });
 });
 
+
+//Taskı Güncelleme
+//Taskı Güncelleme
+//Taskı Güncelleme
+function updateTask(taskId) {
+    $.ajax({
+        url: '/Tasks/UpdateTask',
+        type: 'GET',
+        data: { id: taskId },
+        beforeSend: function () {
+            $('#editTaskModalBody').html('<p>Yükleniyor...</p>');
+        },
+        success: function (partialView) {
+            $('#editTaskModalBody').html(partialView);
+            $('#editTaskModal').modal('show');
+        },
+        error: function (xhr, status, error) {
+            console.error('Partial view yüklenirken hata:', error);
+            $('#editTaskModalBody').html('<p>Hata oluştu, lütfen tekrar deneyin.</p>');
+        }
+    });
+}
+
+// Form submit işlemi
+$(document).on('submit', '#editTaskForm', function (e) {
+    e.preventDefault();
+    $.ajax({
+        url: '/Tasks/UpdateTask',
+        type: 'POST',
+        data: $(this).serialize(),
+        headers: {
+            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+        },
+        success: function (res) {
+            if (res.success) {
+                $('#editTaskModal').modal('hide');
+                location.reload();
+            } else {
+                $('#formErrors').html('<div class="alert alert-danger">' + (res.message || "Bir hata oluştu.") + '</div>');
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Güncelleme sırasında hata:", error);
+            $('#formErrors').html('<div class="alert alert-danger">Güncelleme sırasında hata oluştu.</div>');
+        }
+    });
+});
+
+
+
 // Görev Sil
 function deleteTask(taskId) {
     if (confirm("Bu görevi silmek istediğinize emin misiniz?")) {

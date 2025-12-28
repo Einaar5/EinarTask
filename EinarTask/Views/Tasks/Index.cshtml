@@ -1,98 +1,462 @@
 ﻿@using System.Security.Claims
 @model EinarTask.Models.ViewModels.TaskBoardViewModel
+
 @{
     ViewData["Title"] = "Görev Panosu";
     Layout = "_LayoutTask";
 }
 <style>
+    /* Modern Gradient Buttons */
     .btn-gradient-orange-pink {
-        background: linear-gradient(90deg, #ff512f, #dd2476); /* turuncu → pembe */
+        background: linear-gradient(135deg, #ff512f, #dd2476);
         color: #fff !important;
         border: none;
-        border-radius: 12px; /* daha yuvarlak */
-        padding: 12px 24px;
+        border-radius: 16px;
+        padding: 14px 28px;
         font-weight: 600;
         display: inline-flex;
         align-items: center;
-        gap: 8px; /* ikon ile yazı arası boşluk */
-        transition: 0.3s;
+        gap: 10px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 15px rgba(255, 81, 47, 0.3);
+        position: relative;
+        overflow: hidden;
     }
 
-        .btn-gradient-orange-pink:hover {
-            opacity: 0.9;
-            transform: translateY(-2px); /* hover’da hafif yükselme efekti */
+        .btn-gradient-orange-pink::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
         }
+
+        .btn-gradient-orange-pink:hover::before {
+            left: 100%;
+        }
+
+        .btn-gradient-orange-pink:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 81, 47, 0.4);
+        }
+
+        .btn-gradient-orange-pink:active {
+            transform: translateY(-1px);
+        }
+
+    /* Page Animation */
+    .page-fade {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    @@keyframes fadeInUp {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    /* Column Styling */
+    .column {
+        background: var(--card-bg, #fff);
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        border: 2px solid var(--border, #e0e0e0);
+        min-height: 400px;
+        animation: slideInFromLeft 0.5s ease-out backwards;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+        .column:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .column:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .column:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .column:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+    @@keyframes slideInFromLeft {
+        from
+
+    {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    }
+
+    .column:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    }
+
+    /* Column Header */
+    .column-header {
+        background: linear-gradient(135deg, var(--primary, #ff6347), var(--primary-700, #d64531));
+        color: white;
+        padding: 16px;
+        border-radius: 16px 16px 0 0;
+        margin: -12px -12px 20px -12px;
+    }
+
+        .column-header h5 {
+            color: white !important;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+    /* Task Card */
+    .task-card {
+        background: var(--card-bg, #fff);
+        border: 2px solid var(--border, #f0f0f0);
+        border-radius: 16px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: move;
+        position: relative;
+        overflow: hidden;
+        animation: fadeIn 0.4s ease-out;
+    }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    }
+
+    .task-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(180deg, #ff512f, #dd2476);
+        transition: width 0.3s ease;
+    }
+
+    .task-card:hover {
+        transform: translateX(5px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        border-color: var(--primary, #ff6347);
+    }
+
+        .task-card:hover::before {
+            width: 100%;
+            opacity: 0.1;
+        }
+
+    .task-card.dragging {
+        opacity: 0.5;
+        transform: rotate(5deg);
+    }
+
+    /* Drag Handle */
+    .drag-handle {
+        cursor: grab;
+        font-size: 1.2rem;
+        opacity: 0.5;
+        transition: all 0.3s ease;
+    }
+
+        .drag-handle:hover {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+
+    /* Button Styles */
+    .btn-gradient-yellow {
+        background: linear-gradient(135deg, #f6d365, #fda085);
+        color: #fff !important;
+        border: none;
+        border-radius: 10px;
+        padding: 8px 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 10px rgba(246, 211, 101, 0.3);
+    }
+
+        .btn-gradient-yellow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(246, 211, 101, 0.5);
+        }
+
+    .btn-gradient-red {
+        background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+        color: #fff !important;
+        border: none;
+        border-radius: 10px;
+        padding: 8px 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
+    }
+
+        .btn-gradient-red:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.5);
+        }
+
+    .btn-outline-danger {
+        transition: all 0.3s ease;
+        border-radius: 10px;
+    }
+
+        .btn-outline-danger:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+
+    /* Task List */
+    .task-list {
+        min-height: 200px;
+        padding: 8px;
+    }
+
+    /* Drop Zone Highlight */
+    .column.drag-over {
+        background: rgba(255, 81, 47, 0.05);
+        border-color: var(--primary, #ff6347);
+        border-style: dashed;
+    }
+
+    /* Header Buttons Container */
+    .header-buttons {
+        animation: fadeInDown 0.6s ease-out 0.3s backwards;
+    }
+
+    @@keyframes fadeInDown {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    /* Modal Enhancements */
+    .modal-content {
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @@keyframes modalSlideIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .modal-header {
+        border-radius: 20px 20px 0 0;
+        border-bottom: none;
+        padding: 20px 24px;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .column
+
+    {
+        margin-bottom: 20px;
+    }
+
+    .btn-gradient-orange-pink {
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+
+    }
+
+    /* Task Title */
+    .task-card h6 {
+        background: linear-gradient(135deg, var(--primary, #ff6347), var(--primary-700, #d64531));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Empty State */
+    .task-list:empty::after {
+        content: 'Görev yok - buraya sürükleyin';
+        display: block;
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--muted, #999);
+        font-style: italic;
+        opacity: 0.6;
+    }
+
+    /* Pulse Animation for New Tasks */
+    .task-card.new-task {
+        animation: pulse 0.6s ease-out;
+    }
+
+    @@keyframes pulse {
+        0%, 100%
+
+    {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    }
 </style>
-<div class="container-fluid py-3 page-fade">
-    <div class="mb-3">
-        <button class="btn-gradient-orange-pink" data-bs-toggle="modal" data-bs-target="#createTaskModal">
-            + Yeni Görev Ekle
-        </button>
 
-        <button class="btn-gradient-orange-pink" data-bs-toggle="modal" data-bs-target="#createNewTaskTypeModal">+ Yeni TaskType Ekle</button>
-    </div>
+<div class="container-fluid  page-fade">
 
-    <div class="row g-3">
+
+    <div class="row g-4">
         @foreach (var taskType in Model.TaskTypes ?? Enumerable.Empty<EinarTask.Models.TaskType>())
         {
-            <div class="col-md-3 ">
-                <div class="column p-3 border rounded bg-light"
+            <div class="col-lg-3 col-md-6 col-sm-12">
+                <div class="column p-3"
                      data-tasktype-id="@taskType.Id"
                      ondragover="allowDrop(event)"
-                     ondrop="dropTask(event)">
-
+                     ondrop="dropTask(event)"
+                     ondragleave="dragLeave(event)">
                     <!-- Kolon Başlığı -->
-                    <div class="column-header d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
-                        <h5 class="mb-0">@taskType.Name</h5>
-                        <div>
-                            <button class="btn btn-sm btn-gradient-yellow" onclick="editTaskType(@taskType.Id)">Düzenle</button>
-
-                            <button class="btn btn-sm btn-gradient-red" onclick="deleteTaskType(@taskType.Id)">Sil</button>
-
+                    <div class="column-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="bi bi-kanban me-2"></i>@taskType.Name
+                        </h5>
+                        <div class="z-3">
+                            <button class="btn btn-sm btn-gradient-yellow" onclick="editTaskType(@taskType.Id)" title="Düzenle">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-gradient-red" onclick="deleteTaskType(@taskType.Id)" title="Sil" >
+                                <i class="bi bi-trash"></i>
+                            </button>
                         </div>
                     </div>
-
                     <!-- Task Kartları -->
                     <div class="task-list">
                         @foreach (var task in Model.AllTasks.Where(t => t.TaskTypeId == taskType.Id))
                         {
-                            <div class="task-card mb-3 p-3 border rounded shadow-sm bg-white"
+                            <div class="task-card mb-3 p-3"
                                  draggable="true"
                                  ondragstart="dragTask(event)"
+                                 ondragend="dragEnd(event)"
                                  data-task-id="@task.Id">
-
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <h6 class="fw-bold mb-1">@task.Title</h6>
-                                    <!-- Tutma ikonu -->
-                                    <span class="drag-handle text-muted ms-2" style="cursor: grab;">☰</span>
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="fw-bold mb-0">@task.Title</h6>
+                                    <span class="drag-handle ms-2">
+                                        <i class="bi bi-grip-vertical"></i>
+                                    </span>
                                 </div>
+                                <p class="small text-muted mb-2">@task.Description</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-secondary">
+                                        <i class="bi bi-calendar-event me-1"></i>
+                                        @(task.DueDate?.ToString("dd MMM yyyy") ?? "Belirtilmedi")
+                                    </small>
 
-                                <p class="small text-muted mb-1">@task.Description</p>
-                                <small class="text-secondary d-block mb-2">
-                                    Vade: @(task.DueDate?.ToString("dd MMM yyyy") ?? "Belirtilmedi")
-                                </small>
 
-                                <button class="btn btn-sm btn-outline-danger "
-                                        onclick="deleteTask(@task.Id)" title="Sil">
-                                    <i class="bi bi-trash"></i>
-                                </button>
+                                    <div style="padding:-50px;">
+                                        <button class="btn btn-sm btn-outline-danger me-1"
+                                                title="Güncelle"
+                                                onclick="updateTask(@task.Id)"
+                                                style="z-index:4; position: relative;">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger"
+                                                onclick="deleteTask(@task.Id)"
+                                                title="Sil"
+                                                style="z-index:4; position: relative;">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-
                         }
                     </div>
                 </div>
             </div>
         }
     </div>
+</div>
 
+<!-- Edit Task Modal -->
+<div class="modal fade z-5" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editTaskModalLabel">Görevi Güncelle</h5>
+                
+            </div>
+
+            <div class="modal-body" id="editTaskModalBody">
+                
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Görev Ekle Modal -->
 <div class="modal fade" id="createTaskModal" tabindex="-1" aria-labelledby="createTaskModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="createTaskModalLabel">Yeni Görev Ekle</h5>
+            <div class="modal-header" style="background: linear-gradient(135deg, #ff512f, #dd2476);">
+                <h5 class="modal-title text-white" id="createTaskModalLabel">
+                    <i class="bi bi-plus-circle me-2"></i>Yeni Görev Ekle
+                </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="createTaskModalBody">
@@ -104,10 +468,12 @@
 
 <!-- Yeni TaskType Modal -->
 <div class="modal fade" id="createNewTaskTypeModal" tabindex="-1" aria-labelledby="createNewTaskTypeModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title" id="createNewTaskTypeModalLabel">Yeni TaskType</h5>
+            <div class="modal-header" style="background: linear-gradient(135deg, #11998e, #38ef7d);">
+                <h5 class="modal-title text-white" id="createNewTaskTypeModalLabel">
+                    <i class="bi bi-folder-plus me-2"></i>Yeni TaskType
+                </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="createNewTaskTypeModalBody">
@@ -119,10 +485,12 @@
 
 <!-- TaskType Düzenle Modal -->
 <div class="modal fade" id="editTaskTypeModal" tabindex="-1" aria-labelledby="editTaskTypeModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-warning text-white">
-                <h5 class="modal-title" id="editTaskTypeModalLabel">TaskType Düzenle</h5>
+            <div class="modal-header" style="background: linear-gradient(135deg, #f6d365, #fda085);">
+                <h5 class="modal-title text-white" id="editTaskTypeModalLabel">
+                    <i class="bi bi-pencil me-2"></i>TaskType Düzenle
+                </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="editTaskTypeModalBody">
@@ -136,24 +504,58 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="~/js/ApiRequests.js"></script>
 <script>
-        let draggedEl = null;
+    let draggedEl = null;
 
     function dragTask(e) {
-        draggedEl = e.currentTarget;   // kartı al
+        draggedEl = e.currentTarget;
+        draggedEl.classList.add('dragging');
         e.dataTransfer.effectAllowed = "move";
         e.dataTransfer.setData("text/plain", draggedEl.dataset.taskId);
     }
 
+    function dragEnd(e) {
+        e.currentTarget.classList.remove('dragging');
+        // Remove drag-over class from all columns
+        document.querySelectorAll('.column').forEach(col => {
+            col.classList.remove('drag-over');
+        });
+    }
+
     function allowDrop(e) {
-        e.preventDefault(); // gerekli
+        e.preventDefault();
+        e.currentTarget.classList.add('drag-over');
+    }
+
+    function dragLeave(e) {
+        if (e.target.classList.contains('column')) {
+            e.target.classList.remove('drag-over');
+        }
     }
 
     function dropTask(e) {
         e.preventDefault();
+        e.currentTarget.classList.remove('drag-over');
+
         if (draggedEl) {
-            e.currentTarget.appendChild(draggedEl); // kartı taşı
+            const taskList = e.currentTarget.querySelector('.task-list');
+            taskList.appendChild(draggedEl);
+
+            // Add pulse animation
+            draggedEl.classList.add('new-task');
+            setTimeout(() => {
+                draggedEl.classList.remove('new-task');
+            }, 600);
+
             draggedEl = null;
         }
     }
 
+    // Add smooth scroll behavior
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate task cards on load
+        const taskCards = document.querySelectorAll('.task-card');
+        taskCards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.05}s`;
+        });
+    });
 </script>

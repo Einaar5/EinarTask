@@ -1,0 +1,50 @@
+﻿@model EinarTask.Models.Task
+<form id="editTaskForm" asp-action="UpdateTask" method="post">
+    @Html.AntiForgeryToken()
+    <div id="formErrors" class="text-danger"></div>
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label">İsim</label>
+        <input asp-for="Title" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label">Açıklama</label>
+        <textarea asp-for="Description" class="form-control" rows="2"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="TaskTypeId" class="form-label">Görev Tipi</label>
+        <select asp-for="TaskTypeId" class="form-control" required>
+            <option value="">Seçiniz</option>
+            @foreach (var taskType in ViewBag.TaskTypes as List<EinarTask.Models.TaskType>)
+            {
+                <option value="@taskType.Id" selected="@(taskType.Id == Model.TaskTypeId)">@taskType.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DueDate" class="form-label">Bitiş Tarihi</label>
+        <input asp-for="DueDate" type="date" class="form-control" value="@(Model.DueDate?.ToString("yyyy-MM-dd"))" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Priority" class="form-label">Öncelik</label>
+        <select asp-for="Priority" class="form-control">
+            <option value="0" selected="@(Model.Priority == 0)">Düşük</option>
+            <option value="1" selected="@(Model.Priority == 1)">Orta</option>
+            <option value="2" selected="@(Model.Priority == 2)">Yüksek</option>
+        </select>
+    </div>
+
+    <div class="mb-3 form-check">
+        <input asp-for="IsCompleted" type="checkbox" class="form-check-input" />
+        <label asp-for="IsCompleted" class="form-check-label">Tamamlandı</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="background-color: #ff6347; border: none;">
+        Görevi Güncelle
+    </button>
+</form>

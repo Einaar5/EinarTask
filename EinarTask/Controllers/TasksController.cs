@@ -236,6 +236,50 @@ namespace EinarTask.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> UpdateTask(int id)
+        {
+            var task = await _context.Tasks.FindAsync(id);
+            if (task == null)
+                return NotFound();
+
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var taskTypes = await _context.TaskTypes
+                .Where(t => t.UserId == userId)
+                .ToListAsync();
+            ViewBag.TaskTypes = taskTypes;
+
+            return PartialView("_EditTaskModal2", task);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateTask(Models.Task updatedTask)
+        {
+            var task = await _context.Tasks.FindAsync(updatedTask.Id);
+            if (task == null)
+                return Json(new { success = false, message = "Görev bulunamadı." });
+
+            task.Title = updatedTask.Title;
+            task.Description = updatedTask.Description;
+            task.DueDate = updatedTask.DueDate;
+            task.Priority = updatedTask.Priority;
+            task.IsCompleted = updatedTask.IsCompleted;
+            task.TaskTypeId = updatedTask.TaskTypeId;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Güncelleme sırasında hata oluştu: " + ex.Message });
+            }
+        }
+
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteTaskType(int id)
